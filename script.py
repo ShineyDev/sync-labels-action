@@ -1,9 +1,13 @@
 import argparse
 import asyncio
+import sys
 
 import aiohttp
 import graphql
 import yaml
+
+
+print(sys.version_info)
 
 
 _GQL_REPOSITORY_ID = "query($owner: String!, $name: String!){ repository (owner: $owner, name: $name) { id } }"
