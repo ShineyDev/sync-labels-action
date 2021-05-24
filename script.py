@@ -33,9 +33,9 @@ async def main(*, path, repository, token):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--path", required=True, help="A path to a label config file.")
-    parser.add_argument("--repository", required=True, help="A GitHub repository name and owner.")
-    parser.add_argument("--token", required=True, help="A GitHub PAT with the 'public_repo' scope.")
+    parser.add_argument("--path", required=True)
+    parser.add_argument("--repository", required=True)
+    parser.add_argument("--token", required=True)
     kwargs = parser.parse_args()
 
     asyncio.run(main(**vars(kwargs)))
