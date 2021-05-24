@@ -16,8 +16,8 @@ runs:
   steps:
   - name: Install
     shell: bash
-    run: python -m pip install -r ${{ github.actions_path }}/requirements.txt
+    run: python -m pip install -r ${{ github.action_path }}/requirements.txt
 
   - name: Run
     shell: bash
-    run: python ${{ github.actions_path }} script.py --repository ${{ github.repository }} --token ${{ inputs.token }}
+    run: python ${{ github.action_path }} script.py --repository ${{ github.repository }} --token ${{ inputs.token }}
