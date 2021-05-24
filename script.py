@@ -17,7 +17,7 @@ async def main(*, repository, token):
     headers = {
         "Accept": "application/vnd.github.bane-preview+json",
         "Authorization": f"bearer {token}",
-        "User-Agent": "ShineyDev/sync-labels-action",
+        "User-Agent": f"ShineyDev/sync-labels-action @ {repository}",
     }
 
     async with aiohttp.ClientSession(headers=headers) as session:
