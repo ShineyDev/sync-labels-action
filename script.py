@@ -1,16 +1,14 @@
 import argparse
 import asyncio
-import sys
+import pathlib
 
 import aiohttp
 import graphql
 import yaml
+import yarl
 
 
-print(sys.version_info)
-
-
-_GQL_REPOSITORY_ID = "query($owner: String!, $name: String!){ repository (owner: $owner, name: $name) { id } }"
+_QUERY_REPOSITORY_ID = "query($owner: String!, $name: String!){ repository (owner: $owner, name: $name) { id } }"
 
 
 async def main(*, path, repository, token):
@@ -36,6 +34,6 @@ if __name__ == "__main__":
     parser.add_argument("--path", required=True)
     parser.add_argument("--repository", required=True)
     parser.add_argument("--token", required=True)
-    kwargs = parser.parse_args()
+    kwargs = vars(parser.parse_args())
 
-    asyncio.run(main(**vars(kwargs)))
+    asyncio.run(main(**kwargs))
