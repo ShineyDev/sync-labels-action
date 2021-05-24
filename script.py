@@ -13,7 +13,7 @@ print(sys.version_info)
 _GQL_REPOSITORY_ID = "query($owner: String!, $name: String!){ repository (owner: $owner, name: $name) { id } }"
 
 
-async def main(*, repository, token):
+async def main(*, path, repository, token):
     headers = {
         "Accept": "application/vnd.github.bane-preview+json",
         "Authorization": f"bearer {token}",
@@ -33,6 +33,7 @@ async def main(*, repository, token):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("--path", required=True, help="A path to a label config file.")
     parser.add_argument("--repository", required=True, help="A GitHub repository name and owner.")
     parser.add_argument("--token", required=True, help="A GitHub PAT with the 'public_repo' scope.")
     kwargs = parser.parse_args()

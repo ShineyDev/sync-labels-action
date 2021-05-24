@@ -7,9 +7,13 @@ branding:
   icon: tag
 
 inputs:
+  path:
+    description: A path to a label config file.
+    required: false
+    default: .github/labels.yml
   token:
-    required: true
     description: A GitHub PAT with the 'public_repo' scope.
+    required: true
 
 runs:
   using: composite
@@ -20,4 +24,4 @@ runs:
 
   - name: Run
     shell: bash
-    run: python ${{ github.action_path }}/script.py --repository ${{ github.repository }} --token ${{ inputs.token }}
+    run: python ${{ github.action_path }}/script.py --path ${{ inputs.path }} --repository ${{ github.repository }} --token ${{ inputs.token }}
