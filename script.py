@@ -6,7 +6,7 @@ import graphql
 import yaml
 
 
-_GQL_REPOSITORY_ID_FMT = "query{{repository(owner:\"{0}\",name:\"{1}\"){{id}}}}"
+_GQL_REPOSITORY_ID = "query($owner: String!, $name: String!){ repository (owner: $owner, name: $name) { id } }"
 
 
 async def main(*, repository, token):
@@ -21,7 +21,7 @@ async def main(*, repository, token):
 
         owner, name = repository.split("/")
 
-        repository_id = await client.request(_GQL_REPOSITORY_ID_FMT.format(owner, name))
+        repository_id = await client.request(_GQL_REPOSITORY_ID, owner=owner, name=name)["repository"]
 
         print(repository_id)
 
