@@ -1,5 +1,6 @@
 name: sync-labels-action
 description: oranges
+author: ShineyDev
 
 branding:
   color: gray-dark
