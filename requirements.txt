@@ -1,0 +1,3 @@
+aiohttp
+pyyaml
+graphql @ git+https://github.com/ShineyDev/graphql.git@main

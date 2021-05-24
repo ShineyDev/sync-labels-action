@@ -1,0 +1,22 @@
+name: sync-labels-action
+description: oranges
+
+branding:
+  color: gray-dark
+  icon: tag
+
+inputs:
+  token:
+    required: true
+    description: A GitHub PAT with the 'public_repo' scope.
+
+runs:
+  using: composite
+  steps:
+  - name: Install
+    shell: bash
+    run: python -m pip install -r ${{ github.actions_path }}/requirements.txt
+
+  - name: Run
+    shell: bash
+    run: python ${{ github.actions_path }} script.py --repository ${{ github.repository }} --token ${{ inputs.token }}
