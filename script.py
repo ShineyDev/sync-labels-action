@@ -6,7 +6,7 @@ import graphql
 import yaml
 
 
-_GQL_REPOSITORY_ID_FMT = "query{{repository{{owner:\"{0}\",name:\"{1}\"}}(id)}}"
+_GQL_REPOSITORY_ID_FMT = "query{{repository(owner:\"{0}\",name:\"{1}\"){{id}}}}"
 
 
 async def main(*, repository, token):
