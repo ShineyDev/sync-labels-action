@@ -20,4 +20,4 @@ runs:
 
   - name: Run
     shell: bash
-    run: python ${{ github.action_path }} script.py --repository ${{ github.repository }} --token ${{ inputs.token }}
+    run: python ${{ github.action_path }}/script.py --repository ${{ github.repository }} --token ${{ inputs.token }}
