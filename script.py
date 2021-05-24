@@ -21,7 +21,7 @@ async def main(*, repository, token):
 
         owner, name = repository.split("/")
 
-        repository_id = await client.request(_GQL_REPOSITORY_ID, owner=owner, name=name)["repository"]
+        repository_id = await client.request(_GQL_REPOSITORY_ID, owner=owner, name=name)["repository"]["id"]
 
         print(repository_id)
 
