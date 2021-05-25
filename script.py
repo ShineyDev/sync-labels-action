@@ -91,7 +91,7 @@ async def main(*, path, repository, token):
             return 1
 
         try:
-            data = await client.request(_GQL_REPOSITORY_ID, owner=owner, name=name)
+            data = await client.request(_QUERY_REPOSITORY_ID, owner=owner, name=name)
         except graphql.client.ClientResponseError as e:
             if e.response.status == 401:
                 message = "That token isn't valid!"
