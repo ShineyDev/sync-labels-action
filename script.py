@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import pathlib
+import os
 import re
 import sys
 import textwrap
@@ -54,8 +55,8 @@ print_error = _create_printer(1, "\x1B[38;2;255;128;128m[ERROR] ", "\x1B[0m", st
 _QUERY_REPOSITORY_ID = "query($owner: String!, $name: String!){ repository (owner: $owner, name: $name) { id } }"
 
 
-async def main(*, path, repository, token):
-    print_debug(path, repository)
+async def main(*, paths, repository, token):
+    print_debug(paths, repository)
 
     ...  # TODO
 
@@ -138,11 +139,15 @@ async def main_catchall(*args, **kwargs):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--path", required=True)
+    parser.add_argument("--paths", required=True)
     parser.add_argument("--repository", required=True, metavar="OWNER/NAME")
+    parser.add_argument("--root-path", required=True)
     parser.add_argument("--token", required=True)
     parser.add_argument("--verbosity", required=True, type=int, metavar="0-4")
     kwargs = vars(parser.parse_args())
+
+    root_path = kwargs.pop("root_path")
+    kwargs["paths"] = [os.path.join(root_path, p) for p in kwargs["paths"].split(";")]
 
     verbosity = kwargs.pop("verbosity")
     for printer in _printers:
