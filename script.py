@@ -54,6 +54,8 @@ _QUERY_REPOSITORY_ID = "query($owner: String!, $name: String!){ repository (owne
 async def main(*, path, repository, token):
     print_debug(path, repository)
 
+    ...  # TODO
+
     if " ghp_" in token:
         print_warning("You shouldn't prefix your token. We'll do that for you.")
 
@@ -114,6 +116,8 @@ async def main(*, path, repository, token):
             return 1
 
         print_debug(repository_id)
+
+        ...  # TODO
 
         return 0
 
