@@ -33,3 +33,4 @@ jobs:
       with:
         paths: ${{ github.event.repository.name }};.github
         token: ${{ env.AUTH_TOKEN }}
+        verbosity: 4
