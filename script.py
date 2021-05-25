@@ -19,19 +19,22 @@ def _create_printer(level, prefix, suffix, *, stream=None):
     def printer(*args, **kwargs):
         if printer.is_active:
             if args and isinstance(args[-1], BaseException):
-                e = args[-1]
-                args = args[:-1] + (
-                    "See the error output below.\n\n"
-                    + textwrap.indent(
-                        "".join(traceback.format_exception(type(e), e, e.__traceback__)),
-                        "    "
-                    ),
-                )
+                *args, e = args
+                args += ("See the error output below.",)
+            else:
+                e = None
 
             file = kwargs.pop("file", stream) or sys.stdout
             sep = kwargs.pop("sep", " ")
 
             s = prefix + sep.join(o if isinstance(o, str) else repr(o) for o in args) + suffix
+
+            if e is not None:
+                s += "\n\n" + textwrap.indent(
+                    "".join(traceback.format_exception(type(e), e, e.__traceback__)),
+                    "    "
+                )
+
             print(s, file=file, **kwargs)
 
     printer.level = level
