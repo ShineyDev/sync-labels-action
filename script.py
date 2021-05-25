@@ -146,4 +146,7 @@ if __name__ == "__main__":
         if verbosity >= printer.level:
             printer.is_active = True
 
+    if sys.platform == "win32":
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
     exit(asyncio.run(main_catchall(**kwargs)))
