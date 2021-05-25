@@ -147,7 +147,7 @@ if __name__ == "__main__":
     kwargs = vars(parser.parse_args())
 
     root_path = kwargs.pop("root_path")
-    kwargs["paths"] = [os.path.join(root_path, p) for p in kwargs["paths"].split(";")]
+    kwargs["paths"] = list(set([os.path.join(root_path, p) for p in kwargs["paths"].split(";")]))
 
     verbosity = kwargs.pop("verbosity")
     for printer in _printers:
