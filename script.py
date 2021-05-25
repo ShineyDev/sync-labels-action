@@ -132,9 +132,9 @@ async def main_catchall(*args, **kwargs):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", required=True)
-    parser.add_argument("--repository", required=True)
+    parser.add_argument("--repository", required=True, metavar="OWNER/NAME")
     parser.add_argument("--token", required=True)
-    parser.add_argument("--verbosity", required=True, type=int)
+    parser.add_argument("--verbosity", required=True, type=int, metavar="0-4")
     kwargs = vars(parser.parse_args())
 
     verbosity = kwargs.pop("verbosity")
