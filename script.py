@@ -52,7 +52,9 @@ print_warning = _create_printer(2, "\x1B[38;2;255;192;128m[WARNING]\x1B[0m ", ""
 print_error = _create_printer(1, "\x1B[38;2;255;128;128m[ERROR] ", "\x1B[0m", stream=sys.stderr)
 
 
+# fmt: off
 _QUERY_REPOSITORY_ID = "query($owner: String!, $name: String!){ repository (owner: $owner, name: $name) { id } }"
+# fmt: on
 
 
 async def main(*, paths, repository, token):
