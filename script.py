@@ -33,7 +33,7 @@ def _create_printer(level, prefix, suffix, *, stream=None):
             if e is not None:
                 s += "\n\n" + textwrap.indent(
                     "".join(traceback.format_exception(type(e), e, e.__traceback__)),
-                    "    "
+                    "    ",
                 )
 
             print(s, file=file, **kwargs)
@@ -91,7 +91,7 @@ async def main(*, paths, repository, token):
             print_error(
                 f"That doesn't look like a repository! It should look similar to "
                 f"'ShineyDev/github', not '{repository}'.",
-                e
+                e,
             )
 
             return 1
@@ -114,7 +114,7 @@ async def main(*, paths, repository, token):
             print_error(
                 "The repository you provided does not exist or the token you provided cannot see "
                 "it.",
-                e
+                e,
             )
 
             return 1
