@@ -61,9 +61,9 @@ async def main(*, path, repository, token):
     ...  # TODO
 
     if " ghp_" in token:
-        print_warning("You shouldn't prefix your token. We'll do that for you.")
+        prefix, token = token.split(" ", 1)
 
-        token = token.split(" ", 1)[1]
+        print_warning(f"You shouldn't prefix your token with {prefix} when you use this action.")
 
     if (
         not token.startswith("ghp_")
