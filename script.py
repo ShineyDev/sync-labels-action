@@ -51,7 +51,7 @@ print_error = _create_printer(1, "\x1B[38;2;255;128;128m[ERROR] ", "\x1B[39m", s
 
 
 # fmt: off
-_QUERY_REPOSITORY_ID = "query($owner: String!, $name: String!){ repository (owner: $owner, name: $name) { id } }"
+_QUERY_REPOSITORY_ID = "query($owner:String!,$name:String!){repository(owner:$owner,name:$name){id}}"
 # fmt: on
 
 
