@@ -1,6 +1,5 @@
 import argparse
 import asyncio
-import pathlib
 import re
 import sys
 import textwrap
@@ -8,8 +7,6 @@ import traceback
 
 import aiohttp
 import graphql
-import yaml
-import yarl
 
 
 _printers = list()
