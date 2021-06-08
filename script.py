@@ -14,25 +14,27 @@ _printers = list()
 
 def _create_printer(level, prefix, suffix, *, stream=None):
     def printer(*args, **kwargs):
-        if printer.is_active:
-            if args and isinstance(args[-1], BaseException):
-                *args, e = args
-                args += ("See the error output below.",)
-            else:
-                e = None
+        if not printer.is_active:
+            return
 
-            file = kwargs.pop("file", stream) or sys.stdout
-            sep = kwargs.pop("sep", " ")
+        if args and isinstance(args[-1], BaseException):
+            *args, e = args
+            args += ("See the error output below.",)
+        else:
+            e = None
 
-            s = prefix + sep.join(o if isinstance(o, str) else repr(o) for o in args) + suffix
+        file = kwargs.pop("file", stream) or sys.stdout
+        sep = kwargs.pop("sep", " ")
 
-            if e is not None:
-                s += "\n\n" + textwrap.indent(
-                    "".join(traceback.format_exception(type(e), e, e.__traceback__)),
-                    "    ",
-                )
+        s = prefix + sep.join(o if isinstance(o, str) else repr(o) for o in args) + suffix
 
-            print(s, file=file, **kwargs)
+        if e is not None:
+            s += "\n\n" + textwrap.indent(
+                "".join(traceback.format_exception(type(e), e, e.__traceback__)),
+                "    ",
+            )
+
+        print(s, file=file, **kwargs)
 
     printer.level = level
     printer.is_active = False
