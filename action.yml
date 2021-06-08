@@ -7,8 +7,8 @@ branding:
   icon: tag
 
 inputs:
-  paths:
-    description: A collection of paths relative to github.workspace to checked-out repositories separated by ';'.
+  path:
+    description: A path relative to github.workspace to the checked-out repository.
     required: false
     default: .
   token:
@@ -29,4 +29,4 @@ runs:
 
   - name: Run
     shell: bash
-    run: python ${{ github.action_path }}/script.py --paths "${{ inputs.paths }}" --repository ${{ github.repository }} --root-path ${{ github.workspace }} --token ${{ inputs.token }} --verbosity ${{ inputs.verbosity }}
+    run: python ${{ github.action_path }}/script.py --path "${{ github.workspace }}/${{ inputs.path }}" --repository ${{ github.repository }} --token ${{ inputs.token }} --verbosity ${{ inputs.verbosity }}

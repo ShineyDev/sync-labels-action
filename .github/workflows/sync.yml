@@ -15,22 +15,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout ${{ github.repository }}
-      if: ${{ github.event.repository.name != '.github' }}
+    - name: Checkout
       uses: actions/checkout@v2
-      with:
-        path: ${{ github.event.repository.name }}
-
-    - name: Checkout ${{ github.repository_owner }}/.github
-      uses: actions/checkout@v2
-      with:
-        path: .github
-        repository: ${{ github.repository_owner }}/.github
-        token: ${{ env.AUTH_TOKEN }}
 
     - name: Sync Labels
       uses: ShineyDev/sync-labels-action@main
       with:
-        paths: ${{ github.event.repository.name }};.github
         token: ${{ env.AUTH_TOKEN }}
         verbosity: 4
