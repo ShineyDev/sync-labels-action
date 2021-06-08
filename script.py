@@ -89,7 +89,7 @@ async def main(*, path, repository, token):
             owner, name = repository.split("/")
         except ValueError as e:
             print_error(
-                f"That doesn't look like a repository! It should look similar to "
+                f"That doesn't look like a GitHub repository! It should look similar to "
                 f"'ShineyDev/github', not '{repository}'.",
                 e,
             )
