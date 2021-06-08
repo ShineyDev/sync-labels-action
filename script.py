@@ -44,10 +44,10 @@ def _create_printer(level, prefix, suffix, *, stream=None):
     return printer
 
 
-print_debug = _create_printer(4, "\x1B[38;2;192;255;128m[DEBUG]\x1B[39m ", "")
-print_info = _create_printer(3, "\x1B[38;2;128;128;255m[INFO]\x1B[39m ", "")
-print_warning = _create_printer(2, "\x1B[38;2;255;192;128m[WARNING]\x1B[39m ", "")
-print_error = _create_printer(1, "\x1B[38;2;255;128;128m[ERROR] ", "\x1B[39m", stream=sys.stderr)
+print_debug = _create_printer(4, "\x1B[32m[DEBUG]\x1B[39m ", "")
+print_info = _create_printer(3, "\x1B[34m[INFO]\x1B[39m ", "")
+print_warning = _create_printer(2, "\x1B[33m[WARNING]\x1B[39m ", "")
+print_error = _create_printer(1, "\x1B[31m[ERROR] ", "\x1B[39m", stream=sys.stderr)
 
 
 # fmt: off
