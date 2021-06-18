@@ -1,6 +1,5 @@
 import argparse
 import asyncio
-import re
 import sys
 import textwrap
 import traceback
@@ -59,22 +58,6 @@ async def main(*, repository, source, token):
     print_debug(repository, source)
 
     ...  # TODO: generate a labels array
-
-    if " ghp_" in token:
-        prefix, token = token.split(" ", 1)
-
-        print_warning(f"You shouldn't prefix your token with {prefix} when you use this action.")
-
-    if (
-        not token.startswith("ghp_")
-        or not 40 <= len(token) <= 255
-        or not re.match("^[a-zA-Z0-9_]+$", token)
-    ):
-        print_warning(
-            "That doesn't look like a GitHub personal access token. It should start with 'ghp_', "
-            "be between 40 and 255 in length, and contain only [a-zA-Z0-9_]. You can generate one "
-            "at https://github.com/settings/tokens."
-        )
 
     headers = {
         "Accept": "application/vnd.github.bane-preview+json",
