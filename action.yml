@@ -1,6 +1,6 @@
-name: sync-labels-action
-description: oranges
 author: ShineyDev
+name: sync-labels-action
+description: A GitHub Action for synchronizing your GitHub repository labels with a labels.yml file.
 
 branding:
   color: gray-dark
