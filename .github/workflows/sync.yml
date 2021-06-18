@@ -3,9 +3,9 @@ name: Sync
 on:
   push:
     paths:
+    - .github/data/labels.yml
+    - .github/data/readme.yml
     - .github/workflows/sync.yml
-    - .github/labels.yml
-    - .github/readme.yml
   schedule:
   - cron: 0 0 * * *
   workflow_dispatch:
