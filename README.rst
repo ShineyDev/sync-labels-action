@@ -45,7 +45,7 @@ If you wish to use this GitHub Action as-is, place the following steps in a work
         token: TOKEN
 
 
-Once you've set up your workflow, create a `labels.yml` file in `.github/data/`. This source path can be changed via a GitHub Action input.
+Once you've set up your workflow, create a ``labels.yml`` file in ``.github/data/``. This source path can be changed via a GitHub Action input.
 
 
 If you wish to use the script directly, run the following.
