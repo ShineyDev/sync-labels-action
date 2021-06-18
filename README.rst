@@ -52,4 +52,4 @@ If you wish to use the script directly, run the following.
 
 .. code:: sh
 
-    $ python3 script.py --help
+    $ python script.py --help
