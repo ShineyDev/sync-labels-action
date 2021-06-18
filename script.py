@@ -58,7 +58,7 @@ _QUERY_REPOSITORY_ID = "query($owner:String!,$name:String!){repository(owner:$ow
 async def main(*, repository, source, token):
     print_debug(repository, source)
 
-    ...  # TODO
+    ...  # TODO: generate a labels array
 
     if " ghp_" in token:
         prefix, token = token.split(" ", 1)
@@ -116,7 +116,7 @@ async def main(*, repository, source, token):
 
         print_debug(repository_id)
 
-        ...  # TODO
+        ...  # TODO: update labels
 
         return 0
 
