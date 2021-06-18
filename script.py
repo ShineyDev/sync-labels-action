@@ -118,7 +118,7 @@ async def main(*, repository, source, token):
 
         ...  # TODO: update labels
 
-        return 0
+    return 0
 
 
 async def main_catchall(*args, **kwargs):
