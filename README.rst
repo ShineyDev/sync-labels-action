@@ -50,6 +50,7 @@ Once you've set up your workflow, create a `labels.yml` file in `.github/data/`.
 
 If you wish to use the script directly, run the following.
 
+
 .. code:: sh
 
     $ python script.py --help
