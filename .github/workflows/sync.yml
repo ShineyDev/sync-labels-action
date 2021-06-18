@@ -2,6 +2,10 @@ name: Sync
 
 on:
   push:
+    paths:
+    - .github/workflows/sync.yml
+    - .github/labels.yml
+    - .github/readme.yml
   schedule:
   - cron: 0 0 * * *
   workflow_dispatch:
@@ -10,7 +14,7 @@ env:
   AUTH_TOKEN: ${{ secrets.SYNC_TOKEN }}
 
 jobs:
-  job:
+  labels:
     name: Sync Labels
     runs-on: ubuntu-latest
 
@@ -23,3 +27,23 @@ jobs:
       with:
         token: ${{ env.AUTH_TOKEN }}
         verbosity: 4
+
+  readme:
+    name: Sync README
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Sync README
+      uses: ShineyDev/sync-readme-action@main
+
+    - name: Push
+      continue-on-error: true
+      run: |
+        git config user.name github-actions[bot]
+        git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+        git add .
+        git commit -m "update readme"
+        git push
