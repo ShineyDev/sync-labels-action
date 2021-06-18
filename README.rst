@@ -8,6 +8,10 @@
         <a href="https://github.com/ShineyDev/sync-labels-action/actions?query=workflow%3ALint+event%3Apush">
             <img alt="Lint Status" src="https://github.com/ShineyDev/sync-labels-action/workflows/Lint/badge.svg?event=push" />
         </a>
+
+        <a href="https://github.com/ShineyDev/sync-labels-action/actions?query=workflow%3ASync+event%3Apush">
+            <img alt="Sync Status" src="https://github.com/ShineyDev/sync-labels-action/workflows/Sync/badge.svg?event=push" />
+        </a>
     </p>
 
 ----------
