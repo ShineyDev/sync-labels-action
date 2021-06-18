@@ -29,11 +29,13 @@ Use
 
 If you wish to use this GitHub Action as-is, place the following steps in a workflow job. Replace "TOKEN" with a `GitHub Personal Access Token <https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token>`_ with the ``public_repo`` scope provided by a `secret <https://docs.github.com/en/actions/reference/encrypted-secrets>`_.
 
+
 .. note::
 
     You should install a version of Python 3.6+ before running the GitHub Action, however this step is not required. See
     `Pre-installed Software <https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#preinstalled-software>`_ for
     more information.
+
 
 .. code:: yml
 
@@ -41,6 +43,7 @@ If you wish to use this GitHub Action as-is, place the following steps in a work
       uses: ShineyDev/sync-labels-action@main
       with:
         token: TOKEN
+
 
 Once you've set up your workflow, create a `labels.yml` file in `.github/data/`. This source path can be changed via a GitHub Action input.
 
