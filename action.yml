@@ -7,10 +7,10 @@ branding:
   icon: tag
 
 inputs:
-  path:
-    description: A path relative to github.workspace to the checked-out repository.
+  source:
+    description: A path relative to github.workspace to the source file. Defaults to '.github/labels.yml'.
     required: false
-    default: .
+    default: .github/labels.yml
   token:
     description: A GitHub PAT with the 'public_repo' scope.
     required: true
@@ -29,4 +29,4 @@ runs:
 
   - name: Run
     shell: bash
-    run: python ${{ github.action_path }}/script.py --path "${{ github.workspace }}/${{ inputs.path }}" --repository ${{ github.repository }} --token ${{ inputs.token }} --verbosity ${{ inputs.verbosity }}
+    run: python ${{ github.action_path }}/script.py --repository ${{ github.repository }} --source "${{ github.workspace }}/${{ inputs.source }}" --token ${{ inputs.token }} --verbosity ${{ inputs.verbosity }}

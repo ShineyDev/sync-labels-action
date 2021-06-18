@@ -55,8 +55,8 @@ _QUERY_REPOSITORY_ID = "query($owner:String!,$name:String!){repository(owner:$ow
 # fmt: on
 
 
-async def main(*, path, repository, token):
-    print_debug(path, repository)
+async def main(*, repository, source, token):
+    print_debug(repository, source)
 
     ...  # TODO
 
@@ -134,8 +134,8 @@ async def main_catchall(*args, **kwargs):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--path", required=True)
     parser.add_argument("--repository", required=True, metavar="OWNER/NAME")
+    parser.add_argument("--source", required=True, metavar="PATH")
     parser.add_argument("--token", required=True)
     parser.add_argument("--verbosity", required=True, type=int, metavar="0-4")
     kwargs = vars(parser.parse_args())
