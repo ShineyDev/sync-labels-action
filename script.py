@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import pathlib
 import sys
 import textwrap
 import traceback
@@ -118,7 +119,7 @@ async def main_catchall(*args, **kwargs):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--repository", required=True, metavar="OWNER/NAME")
-    parser.add_argument("--source", required=True, metavar="PATH")
+    parser.add_argument("--source", required=True, type=pathlib.Path, metavar="PATH")
     parser.add_argument("--token", required=True)
     parser.add_argument("--verbosity", required=True, type=int, metavar="0-4")
     kwargs = vars(parser.parse_args())
