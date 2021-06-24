@@ -1,0 +1,4 @@
+inherit:
+- https://raw.githubusercontent.com/ShineyDev/.github/main/data/labels/_.yml
+- https://raw.githubusercontent.com/ShineyDev/.github/main/data/labels/automation-stale.yml
+- https://raw.githubusercontent.com/ShineyDev/.github/main/data/labels/interacts-dependency.yml
