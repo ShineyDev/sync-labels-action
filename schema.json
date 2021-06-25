@@ -1,0 +1,100 @@
+{
+  "$id": "https://raw.githubusercontent.com/ShineyDev/sync-labels-action/main/schema.json",
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "additionalProperties": false,
+  "definitions": {
+    "color_int": {
+      "maximum": 16777215,
+      "minimum": 0,
+      "type": "integer"
+    }
+  },
+  "minProperties": 1,
+  "properties": {
+    "colors": {
+      "additionalProperties": false,
+      "description": "",
+      "minProperties": 1,
+      "patternProperties": {
+        "^.+$": {
+          "$ref": "#/definitions/color_int",
+          "description": ""
+        }
+      },
+      "type": "object"
+    },
+    "groups": {
+      "additionalProperties": false,
+      "description": "",
+      "minProperties": 2,
+      "properties": {
+        "color": {
+          "$ref": "#/definitions/color_int",
+          "description": ""
+        },
+        "labels": {
+          "$ref": "#/properties/labels",
+          "description": ""
+        },
+        "name": {
+          "description": "",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [ "name" ],
+      "type": "object"
+    },
+    "inherit": {
+      "additionalItems": false,
+      "description": "",
+      "items": {
+        "description": "",
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "labels": {
+      "additionalItems": false,
+      "description": "",
+      "items": {
+        "additionalProperties": false,
+        "description": "",
+        "properties": {
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/color_int",
+                "description": ""
+              },
+              {
+                "description": "",
+                "minLength": 1,
+                "type": "string"
+              }
+            ]
+          },
+          "description": {
+            "description": "",
+            "minLength": 1,
+            "type": "string"
+          },
+          "name": {
+            "description": "",
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [ "name" ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "title": "ShineyDev/sync-labels-action: labels.yml schema",
+  "type": "object"
+}
