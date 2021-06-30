@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import collections
 import pathlib
 import sys
 import textwrap
@@ -7,6 +8,12 @@ import traceback
 
 import aiohttp
 import graphql
+
+
+_VersionInfo = collections.namedtuple("_VersionInfo", "major minor micro release serial")
+
+version = "0.1.0a"
+version_info = _VersionInfo(0, 1, 0, "alpha", 0)
 
 
 _printers = list()
@@ -56,6 +63,8 @@ _QUERY_REPOSITORY_ID = "query($owner:String!,$name:String!){repository(owner:$ow
 
 
 async def main(*, repository, source, token):
+    print_info(f"running sync-labels-action v{version}")
+
     print_debug(repository, source)
 
     ...  # TODO: generate a labels array
