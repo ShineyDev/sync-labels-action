@@ -27,7 +27,7 @@
 Use
 ---
 
-If you wish to use this GitHub Action as-is, place the following steps in a workflow job. Replace "TOKEN" with a `GitHub Personal Access Token <https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token>`_ with the ``public_repo`` scope provided by a `secret <https://docs.github.com/en/actions/reference/encrypted-secrets>`_.
+If you wish to use this GitHub Action as-is, place the following step in a workflow job. Replace "TOKEN" with a `GitHub Personal Access Token <https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token>`_ with the ``public_repo`` scope provided by a `secret <https://docs.github.com/en/actions/reference/encrypted-secrets>`_.
 
 
 .. note::
