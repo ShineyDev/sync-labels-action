@@ -5,6 +5,10 @@
             <img alt="Analyze Status" src="https://github.com/ShineyDev/sync-labels-action/workflows/Analyze/badge.svg?event=push" />
         </a>
 
+        <a href="https://github.com/ShineyDev/sync-labels-action/actions?query=workflow%3ADeploy+event%3Apush">
+            <img alt="Deploy Status" src="https://github.com/ShineyDev/sync-labels-action/workflows/Deploy/badge.svg?event=push" />
+        </a>
+
         <a href="https://github.com/ShineyDev/sync-labels-action/actions?query=workflow%3ALint+event%3Apush">
             <img alt="Lint Status" src="https://github.com/ShineyDev/sync-labels-action/workflows/Lint/badge.svg?event=push" />
         </a>
@@ -20,9 +24,7 @@
 
     <h1 align="center">ShineyDev/sync-labels-action</h1>
     <p align="center">A GitHub Action for synchronizing your GitHub repository labels with a labels.yml file.</p>
-    <h6 align="center">Copyright 2021-present ShineyDev</h6>
-    <h6 align="center">This repository is not endorsed by or affiliated with GitHub Inc. or its affiliates. "GitHub" is a registered trademark of GitHub Inc. "GitHub Actions" is a trademark of GitHub Inc.</h6>
-
+    
 
 Use
 ---
@@ -54,3 +56,8 @@ If you wish to use the script directly, run the following.
 .. code:: sh
 
     $ python script.py --help
+
+
+.. raw:: html
+
+    <h6 align="center">Copyright 2021-present ShineyDev<br>This repository is not endorsed by or affiliated with GitHub Inc. or its affiliates. "GitHub" is a registered trademark of GitHub Inc. "GitHub Actions" is a trademark of GitHub Inc.</h6>
