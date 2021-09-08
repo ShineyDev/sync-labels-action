@@ -4,7 +4,6 @@ on:
   push:
     paths:
     - .github/data/labels.yml
-    - .github/data/readme.yml
     - .github/workflows/sync.yml
   schedule:
   - cron: 0 0 * * *
@@ -12,6 +11,7 @@ on:
 
 env:
   AUTH_TOKEN: ${{ secrets.SYNC_TOKEN }}
+  PYTHON_VERSION: 3.9
 
 jobs:
   labels:
@@ -22,28 +22,13 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Set up Python ${{ env.PYTHON_VERSION }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
     - name: Sync Labels
       uses: ShineyDev/sync-labels-action@main
       with:
         token: ${{ env.AUTH_TOKEN }}
         verbosity: 4
-
-  readme:
-    name: Sync README
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Sync README
-      uses: ShineyDev/sync-readme-action@main
-
-    - name: Push
-      continue-on-error: true
-      run: |
-        git config user.name github-actions[bot]
-        git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-        git add .
-        git commit -m "update readme"
-        git push
