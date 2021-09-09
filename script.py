@@ -65,8 +65,6 @@ _QUERY_REPOSITORY_ID = "query($owner:String!,$name:String!){repository(owner:$ow
 async def main(*, repository, source, token):
     print_info(f"running ShineyDev/sync-labels-action v{version}")
 
-    print_debug(repository, source)
-
     ...  # TODO: generate a labels array
 
     headers = {
@@ -89,6 +87,8 @@ async def main(*, repository, source, token):
 
             return 1
 
+        print_debug(f"REPOSITORY: '{owner}/{name}'")
+
         try:
             data = await client.request(_QUERY_REPOSITORY_ID, owner=owner, name=name)
         except graphql.client.ClientResponseError as e:
@@ -107,7 +107,7 @@ async def main(*, repository, source, token):
 
             return 1
 
-        print_debug(repository_id)
+        print_debug(f"REPOSITORY ID: '{repository_id}'")
 
         ...  # TODO: update labels
 
