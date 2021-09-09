@@ -12,8 +12,8 @@ import graphql
 
 _VersionInfo = collections.namedtuple("_VersionInfo", "major minor micro release serial")
 
-version = "0.1.0a"
-version_info = _VersionInfo(0, 1, 0, "alpha", 0)
+version = "0.0.0a"
+version_info = _VersionInfo(0, 0, 0, "alpha", 0)
 
 
 _printers = list()
