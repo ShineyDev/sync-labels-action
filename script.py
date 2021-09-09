@@ -63,7 +63,7 @@ _QUERY_REPOSITORY_ID = "query($owner:String!,$name:String!){repository(owner:$ow
 
 
 async def main(*, repository, source, token):
-    print_info(f"running sync-labels-action v{version}")
+    print_info(f"running ShineyDev/sync-labels-action v{version}")
 
     print_debug(repository, source)
 
@@ -83,7 +83,7 @@ async def main(*, repository, source, token):
         except ValueError as e:
             print_error(
                 f"That doesn't look like a GitHub repository! It should look similar to "
-                f"'ShineyDev/github', not '{repository}'.",
+                f"'ShineyDev/sync-labels-action', not '{repository}'.",
                 e,
             )
 
