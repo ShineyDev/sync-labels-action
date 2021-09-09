@@ -51,10 +51,10 @@ def _create_printer(level, prefix, suffix, *, stream=None):
     return printer
 
 
-print_debug = _create_printer(4, "\x1B[32m[DEBUG]\x1B[39m ", "")
-print_info = _create_printer(3, "\x1B[34m[INFO]\x1B[39m ", "")
+print_debug = _create_printer(4, "  \x1B[32m[DEBUG]\x1B[39m ", "")
+print_info = _create_printer(3, "   \x1B[34m[INFO]\x1B[39m ", "")
 print_warning = _create_printer(2, "\x1B[33m[WARNING]\x1B[39m ", "")
-print_error = _create_printer(1, "\x1B[31m[ERROR] ", "\x1B[39m", stream=sys.stderr)
+print_error = _create_printer(1, "  \x1B[31m[ERROR] ", "\x1B[39m", stream=sys.stderr)
 
 
 # fmt: off
@@ -88,7 +88,7 @@ async def main(*, repository, source, token):
 
             return 1
 
-        print_debug(f"REPOSITORY: '{owner}/{name}'")
+        print_debug(f"REPOSITORY:        '{owner}/{name}'")
 
         try:
             data = await client.request(_QUERY_REPOSITORY_ID, owner=owner, name=name)
@@ -108,7 +108,7 @@ async def main(*, repository, source, token):
 
             return 1
 
-        print_debug(f"REPOSITORY ID: '{repository_id}'")
+        print_debug(f"REPOSITORY ID:     '{repository_id}'")
 
         existing_labels = list()
 
