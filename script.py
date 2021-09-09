@@ -59,6 +59,7 @@ print_error = _create_printer(1, "\x1B[31m[ERROR] ", "\x1B[39m", stream=sys.stde
 
 # fmt: off
 _QUERY_REPOSITORY_ID = "query($owner:String!,$name:String!){repository(owner:$owner,name:$name){id}}"
+_QUERY_REPOSITORY_LABELS_PAGE = "query($cursor:String,$repository_id:ID!){node(id:$repository_id){...on Repository{labels(after:$cursor,first:10){pageInfo{endCursor,hasNextPage}nodes{color,description,id,name}}}}}"
 # fmt: on
 
 
@@ -108,6 +109,30 @@ async def main(*, repository, source, token):
             return 1
 
         print_debug(f"REPOSITORY ID: '{repository_id}'")
+
+        existing_labels = list()
+
+        cursor = None
+        has_next_page = True
+
+        while has_next_page:
+            try:
+                data = await client.request(
+                    _QUERY_REPOSITORY_LABELS_PAGE,
+                    cursor=cursor,
+                    repository_id=repository_id,
+                )
+            except graphql.client.ClientResponseError as e:
+                print_error("A request to fetch your repository's labels failed.", e)
+
+                return 1
+
+            existing_labels.extend(data["node"]["labels"]["nodes"])
+
+            cursor = data["node"]["labels"]["pageInfo"]["endCursor"]
+            has_next_page = data["node"]["labels"]["pageInfo"]["hasNextPage"]
+
+        print_debug(f"REPOSITORY LABELS: {[l['name'] for l in existing_labels]}")
 
         ...  # TODO: update labels
 
