@@ -36,10 +36,7 @@ def _create_printer(level, prefix, suffix, *, stream=None):
         s = prefix + sep.join(o if isinstance(o, str) else repr(o) for o in args) + suffix
 
         if e is not None:
-            s += "\n\n" + textwrap.indent(
-                "".join(traceback.format_exception(type(e), e, e.__traceback__)),
-                "    ",
-            )
+            s += "\n\n" + textwrap.indent("".join(traceback.format_exception(type(e), e, e.__traceback__)), "    ")
 
         print(s, file=file, **kwargs)
 
@@ -81,10 +78,7 @@ async def main(*, repository, source, token):
             owner, name = repository.split("/")
         except ValueError as e:
             print_error(
-                f"That doesn't look like a GitHub repository! It should look similar to "
-                f"'ShineyDev/sync-labels-action', not '{repository}'.",
-                e,
-            )
+                f"That doesn't look like a GitHub repository! It should look similar to 'ShineyDev/sync-labels-action', not '{repository}'.", e)
 
             return 1
 
@@ -100,11 +94,7 @@ async def main(*, repository, source, token):
         try:
             repository_id = data["repository"]["id"]
         except KeyError as e:
-            print_error(
-                "The repository you provided does not exist or the token you provided cannot see "
-                "it.",
-                e,
-            )
+            print_error("The repository you provided does not exist or the token you provided cannot see it.", e)
 
             return 1
 
@@ -117,11 +107,7 @@ async def main(*, repository, source, token):
 
         while has_next_page:
             try:
-                data = await client.request(
-                    _QUERY_REPOSITORY_LABELS_PAGE,
-                    cursor=cursor,
-                    repository_id=repository_id,
-                )
+                data = await client.request(_QUERY_REPOSITORY_LABELS_PAGE, cursor=cursor, repository_id=repository_id)
             except graphql.client.ClientResponseError as e:
                 print_error("A request to fetch your repository's labels failed.", e)
 
