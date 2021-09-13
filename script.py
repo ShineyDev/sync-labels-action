@@ -81,7 +81,7 @@ async def main(*, repository, source, token):
         except ValueError as e:
             return print_error(f"That doesn't look like a GitHub repository! It should look similar to 'ShineyDev/sync-labels-action', not '{repository}'.", e)
 
-        print_debug(f"REPOSITORY:        '{owner}/{name}'")
+        print_debug(f"REPOSITORY: '{owner}/{name}'")
 
         try:
             data = await client.request(_QUERY_REPOSITORY_ID, owner=owner, name=name)
@@ -93,7 +93,7 @@ async def main(*, repository, source, token):
         except KeyError as e:
             return print_error("The repository you provided does not exist or the token you provided cannot see it.", e)
 
-        print_debug(f"REPOSITORY ID:     '{repository_id}'")
+        print_debug(f"REPOSITORY ID: '{repository_id}'")
 
         existing_labels = list()
 
