@@ -19,10 +19,10 @@ version_info = _VersionInfo(0, 0, 0, "alpha", 0)
 _printers = list()
 
 
-def _create_printer(level, prefix, suffix, *, stream=None):
+def _create_printer(level, prefix, suffix, *, retval=None, stream=None):
     def printer(*args, **kwargs):
         if not printer.is_active:
-            return
+            return retval
 
         if args and isinstance(args[-1], BaseException):
             *args, e = args
@@ -40,6 +40,8 @@ def _create_printer(level, prefix, suffix, *, stream=None):
 
         print(s, file=file, **kwargs)
 
+        return retval
+
     printer.level = level
     printer.is_active = False
 
@@ -48,10 +50,10 @@ def _create_printer(level, prefix, suffix, *, stream=None):
     return printer
 
 
-print_debug = _create_printer(4, "  \x1B[32m[DEBUG]\x1B[39m ", "")
-print_info = _create_printer(3, "   \x1B[34m[INFO]\x1B[39m ", "")
-print_warning = _create_printer(2, "\x1B[33m[WARNING]\x1B[39m ", "")
-print_error = _create_printer(1, "  \x1B[31m[ERROR] ", "\x1B[39m", stream=sys.stderr)
+print_debug = _create_printer(4, "  \x1B[32m[DEBUG]\x1B[39m ", "", retval=0)
+print_info = _create_printer(3, "   \x1B[34m[INFO]\x1B[39m ", "", retval=0)
+print_warning = _create_printer(2, "\x1B[33m[WARNING]\x1B[39m ", "", retval=0)
+print_error = _create_printer(1, "  \x1B[31m[ERROR] ", "\x1B[39m", retval=1, stream=sys.stderr)
 
 
 # fmt: off
@@ -77,23 +79,20 @@ async def main(*, repository, source, token):
         try:
             owner, name = repository.split("/")
         except ValueError as e:
-            print_error(
+            return print_error(
                 f"That doesn't look like a GitHub repository! It should look similar to 'ShineyDev/sync-labels-action', not '{repository}'.", e)
-            return 1
 
         print_debug(f"REPOSITORY:        '{owner}/{name}'")
 
         try:
             data = await client.request(_QUERY_REPOSITORY_ID, owner=owner, name=name)
         except graphql.client.ClientResponseError as e:
-            print_error("The request to fetch your repository's ID failed.", e)
-            return 1
+            return print_error("The request to fetch your repository's ID failed.", e)
 
         try:
             repository_id = data["repository"]["id"]
         except KeyError as e:
-            print_error("The repository you provided does not exist or the token you provided cannot see it.", e)
-            return 1
+            return print_error("The repository you provided does not exist or the token you provided cannot see it.", e)
 
         print_debug(f"REPOSITORY ID:     '{repository_id}'")
 
@@ -106,8 +105,7 @@ async def main(*, repository, source, token):
             try:
                 data = await client.request(_QUERY_REPOSITORY_LABELS_PAGE, cursor=cursor, repository_id=repository_id)
             except graphql.client.ClientResponseError as e:
-                print_error("A request to fetch your repository's labels failed.", e)
-                return 1
+                return print_error("A request to fetch your repository's labels failed.", e)
 
             existing_labels.extend(data["node"]["labels"]["nodes"])
 
@@ -125,8 +123,7 @@ async def main_catchall(*args, **kwargs):
     try:
         code = await main(*args, **kwargs)
     except BaseException as e:
-        print_error(e)
-        code = 1
+        code = print_error(e)
     finally:
         return code
 
