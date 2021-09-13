@@ -79,7 +79,6 @@ async def main(*, repository, source, token):
         except ValueError as e:
             print_error(
                 f"That doesn't look like a GitHub repository! It should look similar to 'ShineyDev/sync-labels-action', not '{repository}'.", e)
-
             return 1
 
         print_debug(f"REPOSITORY:        '{owner}/{name}'")
@@ -88,14 +87,12 @@ async def main(*, repository, source, token):
             data = await client.request(_QUERY_REPOSITORY_ID, owner=owner, name=name)
         except graphql.client.ClientResponseError as e:
             print_error("The request to fetch your repository's ID failed.", e)
-
             return 1
 
         try:
             repository_id = data["repository"]["id"]
         except KeyError as e:
             print_error("The repository you provided does not exist or the token you provided cannot see it.", e)
-
             return 1
 
         print_debug(f"REPOSITORY ID:     '{repository_id}'")
@@ -110,7 +107,6 @@ async def main(*, repository, source, token):
                 data = await client.request(_QUERY_REPOSITORY_LABELS_PAGE, cursor=cursor, repository_id=repository_id)
             except graphql.client.ClientResponseError as e:
                 print_error("A request to fetch your repository's labels failed.", e)
-
                 return 1
 
             existing_labels.extend(data["node"]["labels"]["nodes"])
@@ -130,7 +126,6 @@ async def main_catchall(*args, **kwargs):
         code = await main(*args, **kwargs)
     except BaseException as e:
         print_error(e)
-
         code = 1
     finally:
         return code
