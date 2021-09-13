@@ -79,8 +79,7 @@ async def main(*, repository, source, token):
         try:
             owner, name = repository.split("/")
         except ValueError as e:
-            return print_error(
-                f"That doesn't look like a GitHub repository! It should look similar to 'ShineyDev/sync-labels-action', not '{repository}'.", e)
+            return print_error(f"That doesn't look like a GitHub repository! It should look similar to 'ShineyDev/sync-labels-action', not '{repository}'.", e)
 
         print_debug(f"REPOSITORY:        '{owner}/{name}'")
 
