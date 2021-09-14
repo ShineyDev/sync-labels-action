@@ -106,7 +106,9 @@ async def main(*, repository, source, token):
             except graphql.client.ClientResponseError as e:
                 return print_error("A request to fetch your repository's labels failed.", e)
 
-            existing_labels.extend(data["node"]["labels"]["nodes"])
+            for label in data["node"]["labels"]["nodes"]:
+                label["color"] = int(label["color"], 16)
+                existing_labels.append(label)
 
             cursor = data["node"]["labels"]["pageInfo"]["endCursor"]
             has_next_page = data["node"]["labels"]["pageInfo"]["hasNextPage"]
