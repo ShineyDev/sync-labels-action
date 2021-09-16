@@ -8,9 +8,8 @@ branding:
 
 inputs:
   source:
-    description: A path relative to github.workspace to the source file. Defaults to '.github/data/labels.yml'.
-    required: false
-    default: .github/data/labels.yml
+    description: A path relative to github.workspace to the source file.
+    required: true
   token:
     description: A GitHub PAT with the 'public_repo' scope.
     required: true

@@ -30,5 +30,6 @@ jobs:
     - name: Sync Labels
       uses: ShineyDev/sync-labels-action@main
       with:
+        source: .github/data/labels.yml
         token: ${{ env.AUTH_TOKEN }}
         verbosity: 4
