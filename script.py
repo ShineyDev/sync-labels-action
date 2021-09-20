@@ -131,9 +131,22 @@ async def main_catchall(*args, **kwargs):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
+        add_help=False,
         description="A Python script for synchronizing your GitHub repository labels with a labels.yml file.",
         epilog="See the documentation at <https://docs.shiney.dev/sync-labels-action>.",
     )
+
+    class UsageAction(argparse._HelpAction):
+        def __call__(self, parser, namespace, values, option_string=None):
+            formatter = parser._get_formatter()
+            usage = formatter._format_usage(parser.usage, parser._actions, parser._mutually_exclusive_groups, prefix="")
+            parser._print_message(usage, sys.stdout)
+            parser.exit()
+
+    parser.register("action", "usage", UsageAction)
+
+    parser.add_argument("--help", action="help", help=argparse.SUPPRESS)
+    parser.add_argument("--usage", action="usage", help=argparse.SUPPRESS)
 
     parser.add_argument("--repository", metavar="OWNER/NAME", required=True)
     parser.add_argument("--source", metavar="PATH", required=True, type=pathlib.Path)
