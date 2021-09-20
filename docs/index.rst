@@ -11,6 +11,14 @@ A GitHub Action for synchronizing your GitHub repository labels with a labels.ym
 
 
 .. toctree::
+    :caption: Data
+    :maxdepth: 1
+
+    data/file
+    data/schema
+
+
+.. toctree::
     :caption: Interfaces
     :maxdepth: 1
 
