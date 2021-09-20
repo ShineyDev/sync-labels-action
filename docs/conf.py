@@ -13,7 +13,6 @@ extlinks = {
     "issue": ("https://github.com/ShineyDev/sync-labels-action/issues/%s", "#"),
 }
 
-highlight_language = "yaml"
 html_theme = "sphinx_rtd_theme"
 html_theme_options = {
     "collapse_navigation": False,
