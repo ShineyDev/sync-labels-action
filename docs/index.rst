@@ -10,6 +10,14 @@ A GitHub Action for synchronizing your GitHub repository labels with a labels.ym
     introduction
 
 
+.. toctree::
+    :caption: Interfaces
+    :maxdepth: 2
+
+    interfaces/action
+    interfaces/script
+
+
 Still can't find what you're looking for?
 
 * :ref:`genindex`
