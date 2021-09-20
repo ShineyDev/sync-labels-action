@@ -76,10 +76,7 @@ async def main(*, repository, source, token):
     async with aiohttp.ClientSession(headers=headers) as session:
         client = graphql.client.Client(session=session, url="https://api.github.com/graphql")
 
-        try:
-            owner, name = repository.split("/")
-        except ValueError as e:
-            return print_error(f"That doesn't look like a GitHub repository! It should look similar to 'ShineyDev/sync-labels-action', not '{repository}'.", e)
+        owner, name = repository.split("/")
 
         print_debug(f"REPOSITORY: '{owner}/{name}'")
 
