@@ -12,7 +12,7 @@ A GitHub Action for synchronizing your GitHub repository labels with a labels.ym
 
 .. toctree::
     :caption: Interfaces
-    :maxdepth: 2
+    :maxdepth: 1
 
     interfaces/action
     interfaces/script
