@@ -11,10 +11,10 @@ inputs:
     description: A path relative to github.workspace to the source file.
     required: true
   token:
-    description: A GitHub PAT with the 'public_repo' scope.
+    description: A GitHub personal access token with the 'public_repo' scope.
     required: true
   verbosity:
-    description: A level of verbosity for output in the range [0-4]. Defaults to 3.
+    description: "A level of verbosity for output. 0 for none, error, warning, info, and 4 for debug. (default: 3)"
     required: false
     default: "3"
 

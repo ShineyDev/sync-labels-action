@@ -127,10 +127,16 @@ async def main_catchall(*args, **kwargs):
 
 
 if __name__ == "__main__":
+    class HelpFormatter(argparse.HelpFormatter):
+        def __init__(self, *args, **kwargs):
+            kwargs.setdefault("max_help_position", 100)
+            super().__init__(*args, **kwargs)
+
     parser = argparse.ArgumentParser(
         add_help=False,
         description="A Python script for synchronizing your GitHub repository labels with a labels.yml file.",
         epilog="See the documentation at <https://docs.shiney.dev/sync-labels-action>.",
+        formatter_class=HelpFormatter,
     )
 
     class UsageAction(argparse._HelpAction):
@@ -146,10 +152,17 @@ if __name__ == "__main__":
     parser.add_argument("--usage", action="usage", help=argparse.SUPPRESS)
     parser.add_argument("--version", action="version", help=argparse.SUPPRESS, version=version)
 
-    parser.add_argument("--repository", metavar="OWNER/NAME", required=True)
-    parser.add_argument("--source", metavar="PATH", required=True, type=pathlib.Path)
-    parser.add_argument("--token", required=True)
-    parser.add_argument("--verbosity", choices=range(0, 4 + 1), required=True, type=int)
+    a = parser.add_argument("--repository", metavar="OWNER/NAME", required=True)
+    a.help = "A GitHub repository. (example: 'ShineyDev/sync-labels-action')"
+
+    a = parser.add_argument("--source", metavar="PATH", required=True, type=pathlib.Path)
+    a.help = "A path to the source file. (example: './.github/data/labels.yml')"
+
+    a = parser.add_argument("--token", required=True)
+    a.help = "A GitHub personal access token with the 'public_repo' scope."
+
+    a = parser.add_argument("--verbosity", choices=range(0, 4 + 1), required=True, type=int)
+    a.help = "A level of verbosity for output. 0 for none, error, warning, info, and 4 for debug."
 
     kwargs = vars(parser.parse_args())
 
