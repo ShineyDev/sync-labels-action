@@ -149,7 +149,7 @@ if __name__ == "__main__":
     parser.add_argument("--repository", metavar="OWNER/NAME", required=True)
     parser.add_argument("--source", metavar="PATH", required=True, type=pathlib.Path)
     parser.add_argument("--token", required=True)
-    parser.add_argument("--verbosity", metavar="0-4", required=True, type=int)
+    parser.add_argument("--verbosity", choices=range(0, 4 + 1), required=True, type=int)
 
     kwargs = vars(parser.parse_args())
 
