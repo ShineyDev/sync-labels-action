@@ -65,7 +65,7 @@ _QUERY_REPOSITORY_LABELS_PAGE = "query($cursor:String,$repository_id:ID!){node(i
 async def main(*, repository, source, token):
     print_info(f"running ShineyDev/sync-labels-action v{version}")
 
-    ...  # TODO: generate a labels array
+    requested_labels = dict()  # TODO
 
     headers = {
         "Accept": "application/vnd.github.bane-preview+json",
@@ -92,7 +92,7 @@ async def main(*, repository, source, token):
 
         print_debug(f"REPOSITORY ID: '{repository_id}'")
 
-        existing_labels = list()
+        existing_labels = dict()
 
         cursor = None
         has_next_page = True
@@ -103,12 +103,14 @@ async def main(*, repository, source, token):
             except graphql.client.ClientResponseError as e:
                 return print_error("A request to fetch your repository's labels failed.", e)
 
-            existing_labels.extend(data["node"]["labels"]["nodes"])
+            for label in data["node"]["labels"]["nodes"]:
+                name = label.pop("name")
+                existing_labels[name] = label
 
             cursor = data["node"]["labels"]["pageInfo"]["endCursor"]
             has_next_page = data["node"]["labels"]["pageInfo"]["hasNextPage"]
 
-        print_debug(f"REPOSITORY LABELS: {[l['name'] for l in existing_labels]}")
+        print_debug(f"REPOSITORY LABELS: {existing_labels.keys()}")
 
         ...  # TODO: update labels
 
