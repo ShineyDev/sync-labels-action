@@ -12,7 +12,7 @@ Copy the following into ``.github/workflows/sync.yml``.
 
 .. seealso::
 
-    |actions|
+    |workflow|
 
 
 .. code:: yaml
@@ -102,10 +102,6 @@ Copy the following into ``.github/data/labels.yml``.
       color: 0xFFFFFF
 
 
-.. |actions| replace:: |actions_link|_
-.. |actions_link| replace:: Workflow syntax for GitHub Actions
-.. _actions_link: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
-
 .. |secret| replace:: an |secret_link|_
 .. |secret_link| replace:: encrypted repository secret
 .. _secret_link: https://docs.github.com/en/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository
@@ -113,3 +109,7 @@ Copy the following into ``.github/data/labels.yml``.
 .. |token| replace:: a |token_link|_
 .. |token_link| replace:: personal access token
 .. _token_link: https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token
+
+.. |workflow| replace:: |workflow_link|_
+.. |workflow_link| replace:: Workflow syntax for GitHub Actions
+.. _workflow_link: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
