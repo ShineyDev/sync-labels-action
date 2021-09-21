@@ -144,6 +144,7 @@ if __name__ == "__main__":
 
     parser.add_argument("--help", action="help", help=argparse.SUPPRESS)
     parser.add_argument("--usage", action="usage", help=argparse.SUPPRESS)
+    parser.add_argument("--version", action="version", help=argparse.SUPPRESS, version=version)
 
     parser.add_argument("--repository", metavar="OWNER/NAME", required=True)
     parser.add_argument("--source", metavar="PATH", required=True, type=pathlib.Path)
