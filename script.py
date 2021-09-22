@@ -103,22 +103,17 @@ async def main(*, repository, source, token):
                 return print_error("A request to fetch your repository's labels failed.", e)
 
             for label in data["node"]["labels"]["nodes"]:
-                name = label.pop("name")
-                existing_labels[name] = label
+                existing_labels[label.pop("name")] = label
 
             cursor = data["node"]["labels"]["pageInfo"]["endCursor"]
             has_next_page = data["node"]["labels"]["pageInfo"]["hasNextPage"]
 
         error_n = 0
 
-        delete = existing_labels.keys() - requested_labels.keys()
         delete_n = 0
-
-        for name in delete:
-            data = existing_labels[name]
-
+        for name in existing_labels.keys() - requested_labels.keys():
             try:
-                await client.request(_MUTATE_LABEL_DELETE, input={"id": data["id"]})
+                await client.request(_MUTATE_LABEL_DELETE, input={"id": existing_labels[name]["id"]})
             except graphql.client.ClientResponseError as e:
                 error_n += print_error(f"The request to delete label '{name}' failed.", e)
 
@@ -130,11 +125,9 @@ async def main(*, repository, source, token):
 
         print_info(f"deleted {delete_n} labels")
 
-        update = existing_labels.keys() & requested_labels.keys()
         update_n = 0
         skip_n = 0
-
-        for name in update:
+        for name in existing_labels.keys() & requested_labels.keys():
             existing_data = existing_labels[name]
             requested_data = requested_labels[name]
 
@@ -162,10 +155,8 @@ async def main(*, repository, source, token):
 
         print_info(f"updated {update_n} labels")
 
-        create = requested_labels.keys() - existing_labels.keys()
         create_n = 0
-
-        for name in create:
+        for name in requested_labels.keys() - existing_labels.keys():
             data = requested_labels[name]
             data["name"] = name
             data["repositoryId"] = repository_id
