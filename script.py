@@ -57,6 +57,9 @@ print_error = _create_printer(1, "  \x1B[31m[ERROR] ", "\x1B[39m", retval=1, str
 
 
 # fmt: off
+_MUTATE_LABEL_CREATE = "mutation($input:CreateLabelInput!){createLabel(input:$input){__typename}}"
+_MUTATE_LABEL_DELETE = "mutation($input:DeleteLabelInput!){deleteLabel(input:$input){__typename}}"
+_MUTATE_LABEL_UPDATE = "mutation($input:UpdateLabelInput!){updateLabel(input:$input){__typename}}"
 _QUERY_REPOSITORY_ID = "query($owner:String!,$name:String!){repository(owner:$owner,name:$name){id}}"
 _QUERY_REPOSITORY_LABELS_PAGE = "query($cursor:String,$repository_id:ID!){node(id:$repository_id){...on Repository{labels(after:$cursor,first:10){pageInfo{endCursor,hasNextPage}nodes{color,description,id,name}}}}}"
 # fmt: on
@@ -112,7 +115,83 @@ async def main(*, repository, source, token):
 
         print_debug(f"REPOSITORY LABELS: {existing_labels.keys()}")
 
-        ...  # TODO: update labels
+        error_n = 0
+
+        delete = existing_labels.keys() - requested_labels.keys()
+        delete_n = 0
+
+        for name in delete:
+            data = existing_labels[name]
+
+            try:
+                await client.request(_MUTATE_LABEL_DELETE, input={"id": data["id"]})
+            except graphql.client.ClientResponseError as e:
+                error_n += print_error(f"The request to delete label '{name}' failed.", e)
+
+                if error_n >= 10:
+                    return 1
+            else:
+                delete_n += 1
+                print_debug(f"deleted '{name}'")
+
+        print_debug(f"deleted {delete_n} labels")
+
+        update = existing_labels.keys() & requested_labels.keys()
+        update_n = 0
+        skip_n = 0
+
+        for name in update:
+            existing_data = existing_labels[name]
+            requested_data = requested_labels[name]
+
+            data = dict()
+
+            for (key, value) in requested_data.items():
+                if value != existing_data[key]:
+                    data[key] = value
+
+            if data:
+                data["id"] = existing_data["id"]
+
+                try:
+                    await client.request(_MUTATE_LABEL_UPDATE, input=data)
+                except graphql.client.ClientResponseError as e:
+                    error_n += print_error(f"The request to update label '{name}' failed.", e)
+
+                    if error_n >= 10:
+                        return 1
+                else:
+                    update_n += 1
+                    print_debug(f"updated '{name}'")
+            else:
+                skip_n += 1
+
+        print_debug(f"updated {update_n} labels")
+        print_debug(f"skipped {skip_n} labels")
+
+        create = requested_labels.keys() - existing_labels.keys()
+        create_n = 0
+
+        for name in create:
+            data = requested_labels[name]
+            data["name"] = name
+            data["repositoryId"] = repository_id
+
+            try:
+                await client.request(_MUTATE_LABEL_CREATE, input=data)
+            except graphql.client.ClientResponseError as e:
+                error_n += print_error(f"The request to create label '{name}' failed.", e)
+
+                if error_n >= 10:
+                    return 1
+            else:
+                create_n += 1
+                print_debug(f"created '{name}'")
+
+        print_debug(f"created {create_n} labels")
+
+        if error_n:
+            return print_error(f"There were {error_n} errors during the update process.")
 
     return 0
 
