@@ -81,8 +81,6 @@ async def main(*, repository, source, token):
 
         owner, name = repository.split("/")
 
-        print_debug(f"REPOSITORY: '{owner}/{name}'")
-
         try:
             data = await client.request(_QUERY_REPOSITORY_ID, owner=owner, name=name)
         except graphql.client.ClientResponseError as e:
@@ -92,8 +90,6 @@ async def main(*, repository, source, token):
             repository_id = data["repository"]["id"]
         except KeyError as e:
             return print_error("The repository you provided does not exist or the token you provided cannot see it.", e)
-
-        print_debug(f"REPOSITORY ID: '{repository_id}'")
 
         existing_labels = dict()
 
@@ -112,8 +108,6 @@ async def main(*, repository, source, token):
 
             cursor = data["node"]["labels"]["pageInfo"]["endCursor"]
             has_next_page = data["node"]["labels"]["pageInfo"]["hasNextPage"]
-
-        print_debug(f"REPOSITORY LABELS: {existing_labels.keys()}")
 
         error_n = 0
 
@@ -134,7 +128,7 @@ async def main(*, repository, source, token):
                 delete_n += 1
                 print_debug(f"deleted '{name}'")
 
-        print_debug(f"deleted {delete_n} labels")
+        print_info(f"deleted {delete_n} labels")
 
         update = existing_labels.keys() & requested_labels.keys()
         update_n = 0
@@ -166,8 +160,7 @@ async def main(*, repository, source, token):
             else:
                 skip_n += 1
 
-        print_debug(f"updated {update_n} labels")
-        print_debug(f"skipped {skip_n} labels")
+        print_info(f"updated {update_n} labels")
 
         create = requested_labels.keys() - existing_labels.keys()
         create_n = 0
@@ -188,7 +181,8 @@ async def main(*, repository, source, token):
                 create_n += 1
                 print_debug(f"created '{name}'")
 
-        print_debug(f"created {create_n} labels")
+        print_info(f"created {create_n} labels")
+        print_info(f"skipped {skip_n} labels")
 
         if error_n:
             return print_error(f"There were {error_n} errors during the update process.")
