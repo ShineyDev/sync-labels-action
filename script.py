@@ -19,41 +19,51 @@ version_info = _VersionInfo(0, 0, 0, "alpha", 0)
 _printers = list()
 
 
-def _create_printer(level, prefix, suffix, *, retval=None, stream=None):
+def _create_printer(*, level=None, prefix=None, suffix=None, stream=None):
     def printer(*args, **kwargs):
         if not printer.is_active:
-            return retval
+            return
 
+        args = list(args)
+
+        e = None
         if args and isinstance(args[-1], BaseException):
             *args, e = args
-            args += ("See the error output below.",)
-        else:
-            e = None
+            args.append("See the error output below.")
 
         file = kwargs.pop("file", stream) or sys.stdout
-        sep = kwargs.pop("sep", " ")
 
-        s = prefix + sep.join(o if isinstance(o, str) else repr(o) for o in args) + suffix
+        if prefix:
+            if args:
+                args[0] = prefix + (args[0] if isinstance(args[0], str) else repr(args[0]))
+            else:
+                args = [prefix]
+
+        if suffix:
+            if args:
+                args[-1] = (args[-1] if isinstance(args[-1], str) else repr(args[-1])) + suffix
+            else:
+                args = [suffix]
 
         if e is not None:
-            s += "\n\n" + textwrap.indent("".join(traceback.format_exception(type(e), e, e.__traceback__)), "    ")
+            args.append("\n\n" + textwrap.indent("".join(traceback.format_exception(type(e), e, e.__traceback__)), "    "))
 
-        print(s, file=file, **kwargs)
+        print(*args, file=file, **kwargs)
 
-        return retval
+    printer.is_active = True
+    if level is not None:
+        printer.level = level
+        printer.is_active = False
 
-    printer.level = level
-    printer.is_active = False
-
-    _printers.append(printer)
+        _printers.append(printer)
 
     return printer
 
 
-print_debug = _create_printer(4, "  \x1B[32m[DEBUG]\x1B[39m ", "", retval=0)
-print_info = _create_printer(3, "   \x1B[34m[INFO]\x1B[39m ", "", retval=0)
-print_warning = _create_printer(2, "\x1B[33m[WARNING]\x1B[39m ", "", retval=0)
-print_error = _create_printer(1, "  \x1B[31m[ERROR] ", "\x1B[39m", retval=1, stream=sys.stderr)
+print_debug = _create_printer(level=4, prefix="  \x1B[32m[DEBUG]\x1B[39m ", suffix="")
+print_info = _create_printer(level=3, prefix="   \x1B[34m[INFO]\x1B[39m ", suffix="")
+print_warning = _create_printer(level=2, prefix="\x1B[33m[WARNING]\x1B[39m ", suffix="")
+print_error = _create_printer(level=1, prefix="  \x1B[31m[ERROR] ", stream=sys.stderr, suffix="\x1B[39m")
 
 
 # fmt: off
@@ -84,12 +94,14 @@ async def main(*, repository, source, token):
         try:
             data = await client.request(_QUERY_REPOSITORY_ID, owner=owner, name=name)
         except graphql.client.ClientResponseError as e:
-            return print_error("The request to fetch your repository's ID failed.", e)
+            print_error("The request to fetch your repository's ID failed.", e)
+            return 1
 
         try:
             repository_id = data["repository"]["id"]
         except KeyError as e:
-            return print_error("The repository you provided does not exist or the token you provided cannot see it.", e)
+            print_error("The repository you provided does not exist or the token you provided cannot see it.", e)
+            return 1
 
         existing_labels = dict()
 
@@ -100,7 +112,8 @@ async def main(*, repository, source, token):
             try:
                 data = await client.request(_QUERY_REPOSITORY_LABELS_PAGE, cursor=cursor, repository_id=repository_id)
             except graphql.client.ClientResponseError as e:
-                return print_error("A request to fetch your repository's labels failed.", e)
+                print_error("A request to fetch your repository's labels failed.", e)
+                return 1
 
             for label in data["node"]["labels"]["nodes"]:
                 existing_labels[label.pop("name")] = label
@@ -115,7 +128,8 @@ async def main(*, repository, source, token):
             try:
                 await client.request(_MUTATE_LABEL_DELETE, input={"id": existing_labels[name]["id"]})
             except graphql.client.ClientResponseError as e:
-                error_n += print_error(f"The request to delete label '{name}' failed.", e)
+                print_error(f"The request to delete label '{name}' failed.", e)
+                error_n += 1
 
                 if error_n >= 10:
                     return 1
@@ -143,7 +157,8 @@ async def main(*, repository, source, token):
                 try:
                     await client.request(_MUTATE_LABEL_UPDATE, input=data)
                 except graphql.client.ClientResponseError as e:
-                    error_n += print_error(f"The request to update label '{name}' failed.", e)
+                    print_error(f"The request to update label '{name}' failed.", e)
+                    error_n += 1
 
                     if error_n >= 10:
                         return 1
@@ -164,7 +179,8 @@ async def main(*, repository, source, token):
             try:
                 await client.request(_MUTATE_LABEL_CREATE, input=data)
             except graphql.client.ClientResponseError as e:
-                error_n += print_error(f"The request to create label '{name}' failed.", e)
+                print_error(f"The request to create label '{name}' failed.", e)
+                error_n += 1
 
                 if error_n >= 10:
                     return 1
@@ -176,7 +192,8 @@ async def main(*, repository, source, token):
         print_info(f"skipped {skip_n} labels")
 
         if error_n:
-            return print_error(f"There were {error_n} errors during the update process.")
+            print_error(f"There were {error_n} errors during the update process.")
+            return 1
 
     return 0
 
@@ -185,7 +202,8 @@ async def main_catchall(*args, **kwargs):
     try:
         code = await main(*args, **kwargs)
     except BaseException as e:
-        code = print_error(e)
+        print_error(e)
+        code = 1
     finally:
         return code
 
