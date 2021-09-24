@@ -1,7 +1,6 @@
 import argparse
 import asyncio
 import collections
-import pathlib
 import sys
 import textwrap
 import traceback
@@ -281,7 +280,7 @@ if __name__ == "__main__":
     a = parser.add_argument("--repository", metavar="OWNER/NAME", required=True)
     a.help = "A GitHub repository. (example: 'ShineyDev/sync-labels-action')"
 
-    a = parser.add_argument("--source", metavar="PATH", required=True, type=pathlib.Path)
+    a = parser.add_argument("--source", metavar="PATH", required=True)
     a.help = "A path to the source file. (example: './.github/data/labels.yml')"
 
     a = parser.add_argument("--token", required=True)
