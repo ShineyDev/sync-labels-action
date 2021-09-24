@@ -8,6 +8,12 @@ import traceback
 
 import aiohttp
 import graphql
+import yaml
+
+try:
+    from yaml import CSafeLoader as Loader
+except ImportError:
+    from yaml import SafeLoader as Loader
 
 
 _VersionInfo = collections.namedtuple("_VersionInfo", "major minor micro release serial")
@@ -78,7 +84,45 @@ _QUERY_REPOSITORY_LABELS_PAGE = "query($cursor:String,$repository_id:ID!){node(i
 async def main(*, repository, source, token):
     print_info(f"running ShineyDev/sync-labels-action v{version}")
 
-    requested_labels = dict()  # TODO
+    async def follow_sources(content, session):
+        source = yaml.load(content, Loader)
+
+        inherit = source.pop("inherit", list())
+        if isinstance(inherit, str):
+            inherit = [inherit]
+
+        for source in inherit:
+            print_debug(f"reading {source}")
+
+            async with session.request("GET", source, raise_for_status=True) as response:
+                content = await response.read()
+
+            async for source_ in follow_sources(content, session):
+                yield source_
+
+        yield source
+
+    print_debug(f"reading {source}")
+
+    with open(source, "r") as stream:
+        content = stream.read()
+
+    colors = dict()
+    defaults = dict()
+    groups = list()
+    labels = list()
+
+    async with aiohttp.ClientSession() as session:
+        try:
+            async for source in follow_sources(content, session):
+                ...  # TODO: populate colors, defaults, groups, and labels
+        except aiohttp.client_exceptions.ClientResponseError as e:
+            print_error(e)
+            return 1
+
+    requested_labels = dict()
+
+    # TODO: populate requested_labels
 
     headers = {
         "Accept": "application/vnd.github.bane-preview+json",
