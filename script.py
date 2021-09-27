@@ -187,6 +187,7 @@ async def main(*, repository, source, token):
                 error_n += 1
 
                 if error_n >= 10:
+                    print_error("Reached error limit. Exiting early.")
                     return 1
             else:
                 delete_n += 1
@@ -216,6 +217,7 @@ async def main(*, repository, source, token):
                     error_n += 1
 
                     if error_n >= 10:
+                        print_error("Reached error limit. Exiting early.")
                         return 1
                 else:
                     update_n += 1
@@ -238,6 +240,7 @@ async def main(*, repository, source, token):
                 error_n += 1
 
                 if error_n >= 10:
+                    print_error("Reached error limit. Exiting early.")
                     return 1
             else:
                 create_n += 1
