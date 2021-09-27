@@ -194,9 +194,9 @@ async def main(*, partial, repository, source, token):
                     delete_n += 1
                     print_debug(f"deleted '{name}'")
 
-            print_info(f"deleted {delete_n} labels")
+            print_info(f"Deleted {delete_n} labels.")
         else:
-            print_info("Skipping delete flow.")
+            print_info("Skipped delete flow.")
 
         update_n = 0
         skip_n = 0
@@ -228,7 +228,7 @@ async def main(*, partial, repository, source, token):
             else:
                 skip_n += 1
 
-        print_info(f"updated {update_n} labels")
+        print_info(f"Updated {update_n} labels.")
 
         create_n = 0
         for name in requested_labels.keys() - existing_labels.keys():
@@ -249,8 +249,7 @@ async def main(*, partial, repository, source, token):
                 create_n += 1
                 print_debug(f"created '{name}'")
 
-        print_info(f"created {create_n} labels")
-        print_info(f"skipped {skip_n} labels")
+        print_info(f"Created {create_n} labels.")
 
         if error_n:
             print_error(f"There were {error_n} errors during the update process.")
