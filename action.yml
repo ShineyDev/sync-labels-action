@@ -7,6 +7,10 @@ branding:
   icon: tag
 
 inputs:
+  partial:
+    description: Whether the source is partial; 'true' skips the delete flow.
+    required: false
+    default: "false"
   source:
     description: A path relative to github.workspace or a URL to the source file.
     required: true
@@ -28,4 +32,4 @@ runs:
 
   - name: Run
     shell: bash
-    run: python ${{ github.action_path }}/script.py --repository ${{ github.repository }} --source "${{ github.workspace }}/${{ inputs.source }}" --token ${{ inputs.token }} --verbosity ${{ inputs.verbosity }}
+    run: python ${{ github.action_path }}/script.py `if [ '${{ inputs.partial }}' == 'true' ]; then echo '--partial'; fi` --repository ${{ github.repository }} --source "${{ github.workspace }}/${{ inputs.source }}" --token ${{ inputs.token }} --verbosity ${{ inputs.verbosity }}

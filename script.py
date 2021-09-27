@@ -80,7 +80,7 @@ _QUERY_REPOSITORY_LABELS_PAGE = "query($cursor:String,$repository_id:ID!){node(i
 # fmt: on
 
 
-async def main(*, repository, source, token):
+async def main(*, partial, repository, source, token):
     print_info(f"running ShineyDev/sync-labels-action v{version}")
 
     async def follow_sources(content, session):
@@ -178,22 +178,25 @@ async def main(*, repository, source, token):
 
         error_n = 0
 
-        delete_n = 0
-        for name in existing_labels.keys() - requested_labels.keys():
-            try:
-                await client.request(_MUTATE_LABEL_DELETE, input={"id": existing_labels[name]["id"]})
-            except graphql.client.ClientResponseError as e:
-                print_error(f"The request to delete label '{name}' failed.", e)
-                error_n += 1
+        if not partial:
+            delete_n = 0
+            for name in existing_labels.keys() - requested_labels.keys():
+                try:
+                    await client.request(_MUTATE_LABEL_DELETE, input={"id": existing_labels[name]["id"]})
+                except graphql.client.ClientResponseError as e:
+                    print_error(f"The request to delete label '{name}' failed.", e)
+                    error_n += 1
 
-                if error_n == 10:
-                    print_error("Reached error limit. Exiting early.")
-                    return 1
-            else:
-                delete_n += 1
-                print_debug(f"deleted '{name}'")
+                    if error_n == 10:
+                        print_error("Reached error limit. Exiting early.")
+                        return 1
+                else:
+                    delete_n += 1
+                    print_debug(f"deleted '{name}'")
 
-        print_info(f"deleted {delete_n} labels")
+            print_info(f"deleted {delete_n} labels")
+        else:
+            print_info("Skipping delete flow.")
 
         update_n = 0
         skip_n = 0
@@ -291,6 +294,9 @@ if __name__ == "__main__":
     parser.add_argument("--help", action="help", help=argparse.SUPPRESS)
     parser.add_argument("--usage", action="usage", help=argparse.SUPPRESS)
     parser.add_argument("--version", action="version", help=argparse.SUPPRESS, version=version)
+
+    a = parser.add_argument("--partial", action="store_true")
+    a.help = "Marks the source as partial, skipping the delete flow."
 
     a = parser.add_argument("--repository", metavar="OWNER/NAME", required=True)
     a.help = "A GitHub repository. (example: 'ShineyDev/sync-labels-action')"
