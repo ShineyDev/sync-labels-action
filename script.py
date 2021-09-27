@@ -105,8 +105,8 @@ async def main(*, partial, repository, source, token):
 
     colors = dict()
     defaults = dict()
-    groups = list()
-    labels = list()
+    groups = dict()
+    labels = dict()
 
     async with aiohttp.ClientSession() as session:
         if source.startswith("http://") or source.startswith("https://"):
@@ -131,9 +131,9 @@ async def main(*, partial, repository, source, token):
             print_error(e)
             return 1
 
-    requested_labels = dict()
+    requested_labels = labels
 
-    # TODO: populate requested_labels
+    # TODO: populate requested_labels with colors, defaults, and groups
 
     headers = {
         "Accept": "application/vnd.github.bane-preview+json",
