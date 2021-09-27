@@ -103,15 +103,19 @@ async def main(*, repository, source, token):
 
     print_debug(f"reading {source}")
 
-    with open(source, "r") as stream:
-        content = stream.read()
-
     colors = dict()
     defaults = dict()
     groups = list()
     labels = list()
 
     async with aiohttp.ClientSession() as session:
+        if source.startswith("http://") or source.startswith("https://"):
+            async with session.request("GET", source, raise_for_status=True) as response:
+                content = await response.read()
+        else:
+            with open(source, "r") as stream:
+                content = stream.read()
+
         try:
             async for source in follow_sources(content, session):
                 ...  # TODO: populate colors, defaults, groups, and labels
@@ -281,7 +285,7 @@ if __name__ == "__main__":
     a.help = "A GitHub repository. (example: 'ShineyDev/sync-labels-action')"
 
     a = parser.add_argument("--source", metavar="PATH", required=True)
-    a.help = "A path to the source file. (example: './.github/data/labels.yml')"
+    a.help = "A path or a URL to the source file. (example: './.github/data/labels.yml')"
 
     a = parser.add_argument("--token", required=True)
     a.help = "A GitHub personal access token with the 'public_repo' scope."
