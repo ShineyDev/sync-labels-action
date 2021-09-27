@@ -91,7 +91,7 @@ async def main(*, partial, repository, source, token):
             inherit = [inherit]
 
         for source in inherit:
-            print_debug(f"reading {source}")
+            print_debug(f"reading {'partial ' if partial else ''}source '{source}'")
 
             async with session.request("GET", source, raise_for_status=True) as response:
                 content = await response.read()
@@ -101,7 +101,7 @@ async def main(*, partial, repository, source, token):
 
         yield source
 
-    print_debug(f"reading {source}")
+    print_debug(f"reading {'partial ' if partial else ''}source '{source}'")
 
     colors = dict()
     defaults = dict()
