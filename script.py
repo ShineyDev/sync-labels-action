@@ -110,11 +110,19 @@ async def main(*, repository, source, token):
 
     async with aiohttp.ClientSession() as session:
         if source.startswith("http://") or source.startswith("https://"):
-            async with session.request("GET", source, raise_for_status=True) as response:
-                content = await response.read()
+            try:
+                async with session.request("GET", source, raise_for_status=True) as response:
+                    content = await response.read()
+            except aiohttp.client_exceptions.ClientResponseError as e:
+                print_error(e)
+                return 1
         else:
-            with open(source, "r") as stream:
-                content = stream.read()
+            try:
+                with open(source, "r") as stream:
+                    content = stream.read()
+            except OSError as e:
+                print_error(e)
+                return 1
 
         try:
             async for source in follow_sources(content, session):
