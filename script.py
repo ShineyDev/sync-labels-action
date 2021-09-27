@@ -186,7 +186,7 @@ async def main(*, repository, source, token):
                 print_error(f"The request to delete label '{name}' failed.", e)
                 error_n += 1
 
-                if error_n >= 10:
+                if error_n == 10:
                     print_error("Reached error limit. Exiting early.")
                     return 1
             else:
@@ -216,7 +216,7 @@ async def main(*, repository, source, token):
                     print_error(f"The request to update label '{name}' failed.", e)
                     error_n += 1
 
-                    if error_n >= 10:
+                    if error_n == 10:
                         print_error("Reached error limit. Exiting early.")
                         return 1
                 else:
@@ -239,7 +239,7 @@ async def main(*, repository, source, token):
                 print_error(f"The request to create label '{name}' failed.", e)
                 error_n += 1
 
-                if error_n >= 10:
+                if error_n == 10:
                     print_error("Reached error limit. Exiting early.")
                     return 1
             else:
