@@ -81,7 +81,7 @@ _QUERY_REPOSITORY_LABELS_PAGE = "query($cursor:String,$repository_id:ID!){node(i
 
 
 async def main(*, partial, repository, source, token):
-    print_info(f"running ShineyDev/sync-labels-action v{version}")
+    print_info(f"Running ShineyDev/sync-labels-action v{version}.")
 
     async def follow_sources(content, session):
         source = yaml.load(content, Loader)
@@ -91,7 +91,7 @@ async def main(*, partial, repository, source, token):
             inherit = [inherit]
 
         for source in inherit:
-            print_debug(f"reading {'partial ' if partial else ''}source '{source}'")
+            print_info(f"Reading {'partial ' if partial else ''}source '{source}'.")
 
             async with session.request("GET", source, raise_for_status=True) as response:
                 content = await response.read()
@@ -101,7 +101,7 @@ async def main(*, partial, repository, source, token):
 
         yield source
 
-    print_debug(f"reading {'partial ' if partial else ''}source '{source}'")
+    print_info(f"Reading {'partial ' if partial else ''}source '{source}'.")
 
     colors = dict()
     defaults = dict()
@@ -137,7 +137,7 @@ async def main(*, partial, repository, source, token):
         try:
             data = await client.request(_QUERY_REPOSITORY_ID, owner=owner, name=name)
         except graphql.client.ClientResponseError as e:
-            print_error("The request to fetch your repository's ID failed.", e)
+            print_error("The request to fetch your repository identifier failed.", e)
             return 1
 
         try:
@@ -155,7 +155,7 @@ async def main(*, partial, repository, source, token):
             try:
                 data = await client.request(_QUERY_REPOSITORY_LABELS_PAGE, cursor=cursor, repository_id=repository_id)
             except graphql.client.ClientResponseError as e:
-                print_error("A request to fetch your repository's labels failed.", e)
+                print_error("The request to fetch your repository labels failed.", e)
                 return 1
 
             for label in data["node"]["labels"]["nodes"]:
@@ -180,7 +180,7 @@ async def main(*, partial, repository, source, token):
                         return 1
                 else:
                     delete_n += 1
-                    print_debug(f"deleted '{name}'")
+                    print_debug(f"Deleted '{name}'.")
 
             print_info(f"Deleted {delete_n} labels.")
         else:
@@ -212,7 +212,7 @@ async def main(*, partial, repository, source, token):
                         return 1
                 else:
                     update_n += 1
-                    print_debug(f"updated '{name}'")
+                    print_debug(f"Updated '{name}'.")
             else:
                 skip_n += 1
 
@@ -235,12 +235,12 @@ async def main(*, partial, repository, source, token):
                     return 1
             else:
                 create_n += 1
-                print_debug(f"created '{name}'")
+                print_debug(f"Created '{name}'.")
 
         print_info(f"Created {create_n} labels.")
 
         if error_n:
-            print_error(f"There were {error_n} errors during the update process.")
+            print_error(f"There were {error_n} errors during the update flow.")
             return 1
 
     return 0
