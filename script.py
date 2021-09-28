@@ -108,16 +108,20 @@ async def main(*, partial, repository, source, token):
     groups = dict()
     labels = dict()
 
-    async with aiohttp.ClientSession() as session:
-        if source.startswith("http://") or source.startswith("https://"):
-            async with session.request("GET", source, raise_for_status=True) as response:
-                content = await response.read()
-        else:
-            with open(source, "r") as stream:
-                content = stream.read()
+    try:
+        async with aiohttp.ClientSession() as session:
+            if source.startswith("http://") or source.startswith("https://"):
+                async with session.request("GET", source, raise_for_status=True) as response:
+                    content = await response.read()
+            else:
+                with open(source, "r") as stream:
+                    content = stream.read()
 
-        async for source in follow_sources(content, session):
-            ...  # TODO: populate colors, defaults, groups, and labels
+            async for source in follow_sources(content, session):
+                ...  # TODO: populate colors, defaults, groups, and labels
+    except (OSError, aiohttp.ClientResponseError, yaml.YAMLError) as e:
+        print_error("The source you provided is not valid.", e)
+        return 1
 
     requested_labels = labels
 
