@@ -110,26 +110,14 @@ async def main(*, partial, repository, source, token):
 
     async with aiohttp.ClientSession() as session:
         if source.startswith("http://") or source.startswith("https://"):
-            try:
-                async with session.request("GET", source, raise_for_status=True) as response:
-                    content = await response.read()
-            except aiohttp.client_exceptions.ClientResponseError as e:
-                print_error(e)
-                return 1
+            async with session.request("GET", source, raise_for_status=True) as response:
+                content = await response.read()
         else:
-            try:
-                with open(source, "r") as stream:
-                    content = stream.read()
-            except OSError as e:
-                print_error(e)
-                return 1
+            with open(source, "r") as stream:
+                content = stream.read()
 
-        try:
-            async for source in follow_sources(content, session):
-                ...  # TODO: populate colors, defaults, groups, and labels
-        except aiohttp.client_exceptions.ClientResponseError as e:
-            print_error(e)
-            return 1
+        async for source in follow_sources(content, session):
+            ...  # TODO: populate colors, defaults, groups, and labels
 
     requested_labels = labels
 
