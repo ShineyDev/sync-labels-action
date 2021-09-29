@@ -118,7 +118,68 @@ async def main(*, partial, repository, source, token):
                     content = stream.read()
 
             async for source in follow_sources(content, session):
-                ...  # TODO: populate colors, defaults, groups, and labels
+                colors_ = source.get("colors", dict())
+                if isinstance(colors_, list):
+                    colors_ = {c["name"]: c["value"] for c in colors_}
+                colors.update(colors_)
+
+                defaults.update(source.get("defaults", dict()))
+
+                for group in source.get("groups", list()):
+                    group_color = group.get("color", None)
+                    group_description = group.get("description", None)
+                    group_name = group["name"]
+                    group_labels = group.get("labels", list())
+
+                    if group_name in groups.keys():
+                        if group_color is not None:
+                            groups[group_name]["color"] = group_color
+
+                        if group_description is not None:
+                            groups[group_name]["description"] = group_description
+
+                        if group_labels and "labels" not in groups[group_name].keys():
+                            groups[group_name]["labels"] = dict()
+
+                        for label in group_labels:
+                            label_color = label.get("color", None)
+                            label_description = label.get("description", None)
+                            label_name = label["name"]
+
+                            if label_name in groups[group_name]["labels"].keys():
+                                if label_color is not None:
+                                    groups[group_name]["labels"][label_name]["color"] = label_color
+
+                                if label_description is not None:
+                                    groups[group_name]["labels"][label_name]["description"] = label_description
+                            else:
+                                groups[group_name]["labels"][label_name] = {
+                                    "color": label_color,
+                                    "description": label_description,
+                                }
+                    else:
+                        groups[group_name] = {
+                            "color": group_color,
+                            "description": group_description,
+                            "labels": {l.pop("name"): l for l in group_labels},
+                        }
+
+                for label in source.get("labels", list()):
+                    label_color = label.get("color", None)
+                    label_description = label.get("description", None)
+                    label_name = label["name"]
+
+                    if label_name in labels.keys():
+                        if label_color is not None:
+                            labels[label_name]["color"] = label_color
+
+                        if label_description is not None:
+                            labels[label_name]["description"] = label_description
+                    else:
+                        labels[label_name] = {
+                            "color": label_color,
+                            "description": label_description,
+                        }
     except (OSError, aiohttp.ClientResponseError, yaml.YAMLError) as e:
         print_error("The source you provided is not valid.", e)
         return 1
