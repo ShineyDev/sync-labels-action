@@ -121,15 +121,21 @@ async def main(*, partial, repository, source, token):
                 colors_ = source.get("colors", dict())
                 if isinstance(colors_, list):
                     colors_ = {c["name"]: c["value"] for c in colors_}
+
                 colors.update(colors_)
 
                 defaults.update(source.get("defaults", dict()))
 
-                for group in source.get("groups", list()):
-                    group_color = group.get("color", None)
-                    group_description = group.get("description", None)
-                    group_name = group["name"]
-                    group_labels = group.get("labels", list())
+                groups_ = source.get("groups", dict())
+                if isinstance(groups_, list):
+                    groups_ = {g.pop("name"): g for g in groups_}
+
+                for (group_name, data) in groups_.items():
+                    group_color = data.get("color", None)
+                    group_description = data.get("description", None)
+                    group_labels = data.get("labels", dict())
+                    if isinstance(group_labels, list):
+                        group_labels = {l.pop("name"): l for l in group_labels}
 
                     if group_name in groups.keys():
                         if group_color is not None:
@@ -141,10 +147,9 @@ async def main(*, partial, repository, source, token):
                         if group_labels and "labels" not in groups[group_name].keys():
                             groups[group_name]["labels"] = dict()
 
-                        for label in group_labels:
-                            label_color = label.get("color", None)
-                            label_description = label.get("description", None)
-                            label_name = label["name"]
+                        for (label_name, data) in group_labels.items():
+                            label_color = data.get("color", None)
+                            label_description = data.get("description", None)
 
                             if label_name in groups[group_name]["labels"].keys():
                                 if label_color is not None:
@@ -161,13 +166,16 @@ async def main(*, partial, repository, source, token):
                         groups[group_name] = {
                             "color": group_color,
                             "description": group_description,
-                            "labels": {l.pop("name"): l for l in group_labels},
+                            "labels": group_labels,
                         }
 
-                for label in source.get("labels", list()):
-                    label_color = label.get("color", None)
-                    label_description = label.get("description", None)
-                    label_name = label["name"]
+                labels_ = source.get("labels", dict())
+                if isinstance(labels_, list):
+                    labels_ = {l.pop("name"): l for l in labels_}
+
+                for (label_name, data) in labels_:
+                    label_color = data.get("color", None)
+                    label_description = data.get("description", None)
 
                     if label_name in labels.keys():
                         if label_color is not None:
