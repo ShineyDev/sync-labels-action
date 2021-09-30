@@ -173,7 +173,7 @@ async def main(*, partial, repository, source, token):
                 if isinstance(labels_, list):
                     labels_ = {l.pop("name"): l for l in labels_}
 
-                for (label_name, data) in labels_:
+                for (label_name, data) in labels_.items():
                     label_color = data.get("color", None)
                     label_description = data.get("description", None)
 
