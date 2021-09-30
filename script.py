@@ -90,10 +90,10 @@ async def main(*, partial, repository, source, token):
         if isinstance(inherit, str):
             inherit = [inherit]
 
-        for source in inherit:
-            print_info(f"Reading {'partial ' if partial else ''}source '{source}'.")
+        for source_ in inherit:
+            print_info(f"Reading {'partial ' if partial else ''}source '{source_}'.")
 
-            async with session.request("GET", source, raise_for_status=True) as response:
+            async with session.request("GET", source_, raise_for_status=True) as response:
                 content = await response.read()
 
             async for source_ in follow_sources(content, session):
