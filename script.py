@@ -192,9 +192,9 @@ async def main(*, partial, repository, source, token):
         print_error("The source you provided is not valid.", e)
         return 1
 
-    requested_labels = labels
+    requested_labels = dict()
 
-    # TODO: populate requested_labels with colors, defaults, and groups
+    # TODO: populate requested_labels with colors, defaults, groups, and labels
 
     headers = {
         "Accept": "application/vnd.github.bane-preview+json",
