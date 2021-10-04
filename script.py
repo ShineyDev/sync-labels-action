@@ -242,8 +242,10 @@ async def main(*, partial, repository, source, token):
         if not partial:
             delete_n = 0
             for name in existing_labels.keys() - requested_labels.keys():
+                data = {"id": existing_labels[name]["id"]}
+
                 try:
-                    await client.request(_MUTATE_LABEL_DELETE, input={"id": existing_labels[name]["id"]})
+                    await client.request(_MUTATE_LABEL_DELETE, input=data)
                 except graphql.client.ClientResponseError as e:
                     print_error(f"The request to delete label '{name}' failed.", e)
                     error_n += 1
