@@ -134,11 +134,11 @@ async def main(*, partial, repository, source, token):
                 if isinstance(source_groups, dict):
                     source_groups = [{"name": n, **d} for (n, d) in source_groups.items()]
 
-                for data in source_groups:
-                    group_name = data["name"]
-                    group_color = data.get("color", None)
-                    group_description = data.get("description", None)
-                    group_labels = data.get("labels", list())
+                for group_data in source_groups:
+                    group_name = group_data["name"]
+                    group_color = group_data.get("color", None)
+                    group_description = group_data.get("description", None)
+                    group_labels = group_data.get("labels", list())
                     if isinstance(group_labels, dict):
                         group_labels = [{"name": n, **d} for (n, d) in group_labels.items()]
 
@@ -152,10 +152,10 @@ async def main(*, partial, repository, source, token):
                         if group_labels and "labels" not in groups[group_name].keys():
                             groups[group_name]["labels"] = dict()
 
-                        for data in group_labels:
-                            label_name = data["name"]
-                            label_color = data.get("color", None)
-                            label_description = data.get("description", None)
+                        for label_data in group_labels:
+                            label_name = label_data["name"]
+                            label_color = label_data.get("color", None)
+                            label_description = label_data.get("description", None)
 
                             if label_name in groups[group_name]["labels"].keys():
                                 if label_color is not None:
@@ -179,10 +179,10 @@ async def main(*, partial, repository, source, token):
                 if isinstance(source_labels, dict):
                     source_labels = [{"name": n, **d} for (n, d) in source_labels.items()]
 
-                for data in source_labels:
-                    label_name = data["name"]
-                    label_color = data.get("color", None)
-                    label_description = data.get("description", None)
+                for label_data in source_labels:
+                    label_name = label_data["name"]
+                    label_color = label_data.get("color", None)
+                    label_description = label_data.get("description", None)
 
                     if label_name in labels.keys():
                         if label_color is not None:
