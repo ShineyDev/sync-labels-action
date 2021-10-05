@@ -199,9 +199,34 @@ async def main(*, partial, repository, source, token):
         print_error("The source you provided is not valid.", e)
         return 1
 
+    default_color = defaults.get("color", None)
+    default_description = defaults.get("description", None)
+
     requested_labels = dict()
 
-    # TODO: populate requested_labels with colors, defaults, groups, and labels
+    for (label_name, label_data) in labels:
+        label_color = label_data.get("color", None) or default_color
+        if label_color is None:
+            print_error(f"The label '{label_name}' does not have a color and no default was provided.")
+            return 1
+
+        if isinstance(label_color, str):
+            # TODO: handle offsets
+
+            try:
+                label_color = colors[label_color]
+            except KeyError as e:
+                print_error(f"The label '{label_name}' requests color '{label_color}' which does not exist.", e)
+                return 1
+
+        label_description = label_data.get("description", None) or default_description
+
+        requested_labels[label_name] = {
+            "color": label_color,
+            "description": label_description,
+        }
+
+    # TODO: populate requested_labels with groups
 
     headers = {
         "Accept": "application/vnd.github.bane-preview+json",
