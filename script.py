@@ -280,12 +280,12 @@ async def main(*, partial, repository, source, token):
 
             label_description = label_data.get("description", None) or group_description or default_description
 
-            label_name_prefixed = f"{group_prefix}:{label_name}"
-            if label_name_prefixed in requested_labels.keys():
-                print_error(f"The group '{group_name}' defines label '{label_name_prefixed}' which already exists.")
+            label_name = f"{group_prefix}:{label_name}"
+            if label_name in requested_labels.keys():
+                print_error(f"The group '{group_name}' defines label '{label_name}' which already exists.")
                 return 1
 
-            requested_labels[label_name_prefixed] = {
+            requested_labels[label_name] = {
                 "color": label_color,
                 "description": label_description,
             }
