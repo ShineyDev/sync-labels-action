@@ -105,8 +105,8 @@ async def main(*, partial, repository, source, token):
 
     colors = dict()
     defaults = dict()
-    groups = dict()
-    labels = dict()
+    groups = list()
+    labels = list()
 
     try:
         async with aiohttp.ClientSession() as session:
@@ -142,38 +142,52 @@ async def main(*, partial, repository, source, token):
                     if isinstance(group_labels, dict):
                         group_labels = [{"name": n, **d} for (n, d) in group_labels.items()]
 
-                    if group_name in groups.keys():
+                    existing_group = None
+                    for group in groups:
+                        if group["name"] == group_name:
+                            existing_group = group
+                            break
+
+                    if existing_group:
                         if group_color is not None:
-                            groups[group_name]["color"] = group_color
+                            existing_group["color"] = group_color
 
                         if group_description is not None:
-                            groups[group_name]["description"] = group_description
+                            existing_group["description"] = group_description
 
-                        if group_labels and "labels" not in groups[group_name].keys():
-                            groups[group_name]["labels"] = dict()
+                        if group_labels and "labels" not in existing_group.keys():
+                            existing_group["labels"] = list()
 
                         for label_data in group_labels:
                             label_name = label_data["name"]
                             label_color = label_data.get("color", None)
                             label_description = label_data.get("description", None)
 
-                            if label_name in groups[group_name]["labels"].keys():
+                            existing_label = None
+                            for label in existing_group["labels"]:
+                                if label["name"] == label_name:
+                                    existing_label = label
+                                    break
+
+                            if existing_label:
                                 if label_color is not None:
-                                    groups[group_name]["labels"][label_name]["color"] = label_color
+                                    existing_label["color"] = label_color
 
                                 if label_description is not None:
-                                    groups[group_name]["labels"][label_name]["description"] = label_description
+                                    existing_label["description"] = label_description
                             else:
-                                groups[group_name]["labels"][label_name] = {
+                                existing_group["labels"].append({
                                     "color": label_color,
                                     "description": label_description,
-                                }
+                                    "name": label_name,
+                                })
                     else:
-                        groups[group_name] = {
+                        groups.append({
                             "color": group_color,
                             "description": group_description,
                             "labels": group_labels,
-                        }
+                            "name": group_name,
+                        })
 
                 source_labels = source.get("labels", list())
                 if isinstance(source_labels, dict):
@@ -184,17 +198,24 @@ async def main(*, partial, repository, source, token):
                     label_color = label_data.get("color", None)
                     label_description = label_data.get("description", None)
 
-                    if label_name in labels.keys():
+                    existing_label = None
+                    for label in labels:
+                        if label["name"] == label_name:
+                            existing_label = label
+                            break
+
+                    if existing_label:
                         if label_color is not None:
-                            labels[label_name]["color"] = label_color
+                            existing_label["color"] = label_color
 
                         if label_description is not None:
-                            labels[label_name]["description"] = label_description
+                            existing_label["description"] = label_description
                     else:
-                        labels[label_name] = {
+                        labels.append({
                             "color": label_color,
                             "description": label_description,
-                        }
+                            "name": label_name,
+                        })
     except (OSError, aiohttp.ClientResponseError, yaml.YAMLError) as e:
         print_error("The source you provided is not valid.", e)
         return 1
@@ -204,7 +225,9 @@ async def main(*, partial, repository, source, token):
 
     requested_labels = dict()
 
-    for (label_name, label_data) in labels.items():
+    for label_data in labels:
+        label_name = label_data["name"]
+
         label_color = label_data.get("color", None) or default_color
         if label_color is None:
             print_error(f"The label '{label_name}' does not have a color and no default was provided.")
