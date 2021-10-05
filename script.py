@@ -204,7 +204,7 @@ async def main(*, partial, repository, source, token):
 
     requested_labels = dict()
 
-    for (label_name, label_data) in labels:
+    for (label_name, label_data) in labels.items():
         label_color = label_data.get("color", None) or default_color
         if label_color is None:
             print_error(f"The label '{label_name}' does not have a color and no default was provided.")
