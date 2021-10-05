@@ -249,7 +249,46 @@ async def main(*, partial, repository, source, token):
             "description": label_description,
         }
 
-    # TODO: populate requested_labels with groups
+    for group_data in groups:
+        group_name = group_data["name"]
+        group_color = group_data.get("color", None)
+        group_description = group_data.get("description", None)
+        group_labels = group_data.get("labels", None)
+
+        group_prefix_length = 0
+        group_prefix = ""
+        while any(n.startswith(group_prefix) for g in groups if g["name"] != group_name for n in g["name"]):
+            group_prefix_length += 1
+            group_prefix = group_name[:group_prefix_length + 1]
+
+        for label_data in group_labels:
+            label_name = label_data["name"]
+
+            label_color = label_data.get("color", None) or group_color or default_color
+            if label_color is None:
+                print_error(f"The label '{label_name}' in group '{group_name}' does not have a color and no default was provided.")
+                return 1
+
+            if isinstance(label_color, str):
+                # TODO: handle offsets
+
+                try:
+                    label_color = colors[label_color]
+                except KeyError as e:
+                    print_error(f"The label '{label_name}' in group '{group_name}' requests color '{label_color}' which does not exist.", e)
+                    return 1
+
+            label_description = label_data.get("description", None) or group_description or default_description
+
+            label_name_prefixed = f"{group_prefix}:{label_name}"
+            if label_name_prefixed in requested_labels.keys():
+                print_error(f"The group '{group_name}' defines label '{label_name_prefixed}' which already exists.")
+                return 1
+
+            requested_labels[label_name_prefixed] = {
+                "color": label_color,
+                "description": label_description,
+            }
 
     headers = {
         "Accept": "application/vnd.github.bane-preview+json",
