@@ -280,7 +280,7 @@ async def main(*, partial, repository, source, token):
 
         group_prefix_length = 1
         group_prefix = group_name[:group_prefix_length]
-        while any(g["name"].startswith(group_prefix) for g in groups if g["name"] != group_name):
+        while any(g["name"].startswith(group_prefix) for g in groups if g["name"] != group_name and g.get("labels", None)):
             group_prefix_length += 1
             group_prefix = group_name[:group_prefix_length]
 
