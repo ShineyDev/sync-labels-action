@@ -72,7 +72,7 @@ Copy the following into ``.github/data/labels.yml``.
 
 .. seealso::
 
-    :ref:`Writing a data file <file>`
+    :doc:`Writing a data file </data/file>`
 
 
 .. code:: yaml
