@@ -275,11 +275,14 @@ async def main(*, partial, repository, source, token):
         group_description = group_data.get("description", None)
         group_labels = group_data.get("labels", None)
 
-        group_prefix_length = 0
-        group_prefix = ""
-        while any(n.startswith(group_prefix) for g in groups if g["name"] != group_name for n in g["name"]):
+        group_prefix_length = 1
+        group_prefix = group_name[:group_prefix_length]
+        while any(g["name"].startswith(group_prefix) for g in groups if g["name"] != group_name):
             group_prefix_length += 1
-            group_prefix = group_name[:group_prefix_length + 1]
+            group_prefix = group_name[:group_prefix_length]
+
+            if group_prefix == group_name:
+                break
 
         for label_data in group_labels:
             label_name = label_data["name"]
