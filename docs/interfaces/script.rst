@@ -4,6 +4,11 @@ Script
 This document will guide you through using sync-labels-action as a Python script.
 
 
+.. note::
+
+    This document is incomplete.
+
+
 .. code::
 
     script.py [--partial] --repository OWNER/NAME --source PATH --token TOKEN --verbosity {0,1,2,3,4}

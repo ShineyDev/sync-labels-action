@@ -4,6 +4,11 @@ Action
 This document will guide you through using sync-labels-action as a GitHub Action.
 
 
+.. note::
+
+    This document is incomplete.
+
+
 Workflow
 --------
 
