@@ -176,18 +176,32 @@ async def main(*, partial, repository, source, token):
                                 if label_description is not None:
                                     existing_label["description"] = label_description
                             else:
-                                existing_group["labels"].append({
-                                    "color": label_color,
-                                    "description": label_description,
-                                    "name": label_name,
-                                })
+                                data = dict()
+
+                                if label_color is not None:
+                                    data["color"] = label_color
+
+                                if label_description is not None:
+                                    data["description"] = label_description
+
+                                data["name"] = label_name
+
+                                existing_group["labels"].append(data)
                     else:
-                        groups.append({
-                            "color": group_color,
-                            "description": group_description,
-                            "labels": group_labels,
-                            "name": group_name,
-                        })
+                        data = dict()
+
+                        if group_color is not None:
+                            data["color"] = group_color
+
+                        if group_description is not None:
+                            data["description"] = group_description
+
+                        if group_labels:
+                            data["labels"] = group_labels
+
+                        data["name"] = group_name
+
+                        groups.append(data)
 
                 source_labels = source.get("labels", list())
                 if isinstance(source_labels, dict):
@@ -211,11 +225,17 @@ async def main(*, partial, repository, source, token):
                         if label_description is not None:
                             existing_label["description"] = label_description
                     else:
-                        labels.append({
-                            "color": label_color,
-                            "description": label_description,
-                            "name": label_name,
-                        })
+                        data = dict()
+
+                        if label_color is not None:
+                            data["color"] = label_color
+
+                        if label_description is not None:
+                            data["description"] = label_description
+
+                        data["name"] = label_name
+
+                        labels.append(data)
     except (OSError, aiohttp.ClientResponseError, yaml.YAMLError) as e:
         print_error("The source you provided is not valid.", e)
         return 1
