@@ -101,6 +101,7 @@ async def main(*, partial, repository, source, token):
 
         yield source
 
+    print_info("Reading sources.")
     print_info(f"Reading {'partial ' if partial else ''}source '{source}'.")
 
     colors = dict()
@@ -243,6 +244,8 @@ async def main(*, partial, repository, source, token):
     default_color = defaults.get("color", None)
     default_description = defaults.get("description", None)
 
+    print_info("Populating requested labels.")
+
     requested_labels = dict()
 
     for label_data in labels:
@@ -313,6 +316,8 @@ async def main(*, partial, repository, source, token):
                 "description": label_description,
             }
 
+    print_info("Authenticating to GitHub.")
+
     headers = {
         "Accept": "application/vnd.github.bane-preview+json",
         "Authorization": f"bearer {token}",
@@ -336,6 +341,8 @@ async def main(*, partial, repository, source, token):
             print_error("The repository you provided does not exist or the token you provided cannot see it.", e)
             return 1
 
+        print_info("Populating existing labels.")
+
         existing_labels = dict()
 
         cursor = None
@@ -353,6 +360,8 @@ async def main(*, partial, repository, source, token):
 
             cursor = data["node"]["labels"]["pageInfo"]["endCursor"]
             has_next_page = data["node"]["labels"]["pageInfo"]["hasNextPage"]
+
+        print_info("Updating labels.")
 
         error_n = 0
 
