@@ -484,7 +484,7 @@ if __name__ == "__main__":
     parser.add_argument("--version", action="version", help=argparse.SUPPRESS, version=version)
 
     a = parser.add_argument("--partial", action="store_true")
-    a.help = "Marks the source as partial, skipping the delete flow."
+    a.help = "Marks the source as partial."
 
     a = parser.add_argument("--repository", metavar="OWNER/NAME", required=True)
     a.help = "A GitHub repository. (example: 'ShineyDev/sync-labels-action')"
