@@ -178,31 +178,20 @@ async def main(*, partial, repository, source, token):
                                 if label_description is not None:
                                     existing_label["description"] = label_description
                             else:
-                                data = dict()
-
-                                if label_color is not None:
-                                    data["color"] = label_color
-
-                                if label_description is not None:
-                                    data["description"] = label_description
-
-                                data["name"] = label_name
+                                data = {
+                                    "name": label_name,
+                                    "color": label_color,
+                                    "description": label_description,
+                                }
 
                                 existing_group["labels"].append(data)
                     else:
-                        data = dict()
-
-                        if group_color is not None:
-                            data["color"] = group_color
-
-                        if group_description is not None:
-                            data["description"] = group_description
-
-                        if group_labels:
-                            data["labels"] = group_labels
-
-                        if group_name is not None:
-                            data["name"] = group_name
+                        data = {
+                            "name": group_name,
+                            "color": group_color,
+                            "description": group_description,
+                            "labels": group_labels,
+                        }
 
                         groups.append(data)
 
@@ -228,15 +217,11 @@ async def main(*, partial, repository, source, token):
                         if label_description is not None:
                             existing_label["description"] = label_description
                     else:
-                        data = dict()
-
-                        if label_color is not None:
-                            data["color"] = label_color
-
-                        if label_description is not None:
-                            data["description"] = label_description
-
-                        data["name"] = label_name
+                        data = {
+                            "name": label_name,
+                            "color": label_color,
+                            "description": label_description,
+                        }
 
                         labels.append(data)
     except (OSError, aiohttp.ClientResponseError, yaml.YAMLError) as e:
@@ -253,7 +238,7 @@ async def main(*, partial, repository, source, token):
     for label_data in labels:
         label_name = label_data["name"]
 
-        label_color = label_data.get("color", None) or default_color
+        label_color = label_data["color"] or default_color
         if label_color is None:
             print_error(f"The label '{label_name}' does not have a color and no default was provided.")
             return 1
@@ -267,7 +252,7 @@ async def main(*, partial, repository, source, token):
                 print_error(f"The label '{label_name}' requests color '{label_color}' which does not exist.", e)
                 return 1
 
-        label_description = label_data.get("description", None) or default_description
+        label_description = label_data["description"] or default_description
 
         requested_labels[label_name] = {
             "color": label_color,
@@ -275,15 +260,15 @@ async def main(*, partial, repository, source, token):
         }
 
     for group_data in groups:
-        group_name = group_data.get("name", None)
-        group_color = group_data.get("color", None)
-        group_description = group_data.get("description", None)
-        group_labels = group_data.get("labels", None)
+        group_name = group_data["name"]
+        group_color = group_data["color"]
+        group_description = group_data["description"]
+        group_labels = group_data["labels"]
 
         if group_name:
             group_prefix_length = 1
             group_prefix = group_name[:group_prefix_length]
-            while any(g["name"].startswith(group_prefix) for g in groups if g.get("name", None) and g.get("name", None) != group_name and g.get("labels", None)):
+            while any(g["name"].startswith(group_prefix) for g in groups if g["name"] and g["name"] != group_name and g["labels"]):
                 group_prefix_length += 1
                 group_prefix = group_name[:group_prefix_length]
 
@@ -295,7 +280,7 @@ async def main(*, partial, repository, source, token):
         for label_data in group_labels:
             label_name = label_data["name"]
 
-            label_color = label_data.get("color", None) or group_color or default_color
+            label_color = label_data["color"] or group_color or default_color
             if label_color is None:
                 print_error(f"The label '{label_name}' in group '{group_name}' does not have a color and no default was provided.")
                 return 1
@@ -309,7 +294,7 @@ async def main(*, partial, repository, source, token):
                     print_error(f"The label '{label_name}' in group '{group_name}' requests color '{label_color}' which does not exist.", e)
                     return 1
 
-            label_description = label_data.get("description", None) or group_description or default_description
+            label_description = label_data["description"] or group_description or default_description
 
             if group_prefix:
                 label_name = f"{group_prefix}:{label_name}"
