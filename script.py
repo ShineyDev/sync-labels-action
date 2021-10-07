@@ -136,7 +136,7 @@ async def main(*, partial, repository, source, token):
                     source_groups = [{"name": n, **d} for (n, d) in source_groups.items()]
 
                 for group_data in source_groups:
-                    group_name = group_data["name"]
+                    group_name = group_data.get("name", None)
                     group_color = group_data.get("color", None)
                     group_description = group_data.get("description", None)
                     group_labels = group_data.get("labels", list())
@@ -144,10 +144,11 @@ async def main(*, partial, repository, source, token):
                         group_labels = [{"name": n, **d} for (n, d) in group_labels.items()]
 
                     existing_group = None
-                    for group in groups:
-                        if group["name"] == group_name:
-                            existing_group = group
-                            break
+                    if group_name:
+                        for group in groups:
+                            if group["name"] == group_name:
+                                existing_group = group
+                                break
 
                     if existing_group:
                         if group_color is not None:
@@ -200,7 +201,8 @@ async def main(*, partial, repository, source, token):
                         if group_labels:
                             data["labels"] = group_labels
 
-                        data["name"] = group_name
+                        if group_name is not None:
+                            data["name"] = group_name
 
                         groups.append(data)
 
@@ -273,19 +275,22 @@ async def main(*, partial, repository, source, token):
         }
 
     for group_data in groups:
-        group_name = group_data["name"]
+        group_name = group_data.get("name", None)
         group_color = group_data.get("color", None)
         group_description = group_data.get("description", None)
         group_labels = group_data.get("labels", None)
 
-        group_prefix_length = 1
-        group_prefix = group_name[:group_prefix_length]
-        while any(g["name"].startswith(group_prefix) for g in groups if g["name"] != group_name and g.get("labels", None)):
-            group_prefix_length += 1
+        if group_name:
+            group_prefix_length = 1
             group_prefix = group_name[:group_prefix_length]
+            while any(g["name"].startswith(group_prefix) for g in groups if g.get("name", None) and g.get("name", None) != group_name and g.get("labels", None)):
+                group_prefix_length += 1
+                group_prefix = group_name[:group_prefix_length]
 
-            if group_prefix == group_name:
-                break
+                if group_prefix == group_name:
+                    break
+        else:
+            group_prefix = None
 
         for label_data in group_labels:
             label_name = label_data["name"]
@@ -306,7 +311,9 @@ async def main(*, partial, repository, source, token):
 
             label_description = label_data.get("description", None) or group_description or default_description
 
-            label_name = f"{group_prefix}:{label_name}"
+            if group_prefix:
+                label_name = f"{group_prefix}:{label_name}"
+
             if label_name in requested_labels.keys():
                 print_error(f"The group '{group_name}' defines label '{label_name}' which already exists.")
                 return 1
