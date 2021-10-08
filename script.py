@@ -357,7 +357,9 @@ async def main(*, partial, repository, source, token):
 
         error_n = 0
 
-        if not partial:
+        if partial:
+            print_info("Skipped delete flow.")
+        else:
             delete_n = 0
             for name in existing_labels.keys() - requested_labels.keys():
                 data = {"id": existing_labels[name]["id"]}
@@ -376,8 +378,6 @@ async def main(*, partial, repository, source, token):
                     print_debug(f"Deleted '{name}'.")
 
             print_info(f"Deleted {delete_n} labels.")
-        else:
-            print_info("Skipped delete flow.")
 
         update_n = 0
         skip_n = 0
