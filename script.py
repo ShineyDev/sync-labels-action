@@ -355,8 +355,6 @@ async def main(*, partial, repository, source, token):
 
         print_info("Updating labels.")
 
-        error_n = 0
-
         if partial:
             print_info("Skipped delete flow.")
         else:
@@ -368,14 +366,10 @@ async def main(*, partial, repository, source, token):
                     await client.request(_MUTATE_LABEL_DELETE, input=data)
                 except graphql.client.ClientResponseError as e:
                     print_error(f"The request to delete label '{name}' failed.", e)
-                    error_n += 1
+                    return 1
 
-                    if error_n == 10:
-                        print_error("Reached error limit. Exiting early.")
-                        return 1
-                else:
-                    delete_n += 1
-                    print_debug(f"Deleted '{name}'.")
+                delete_n += 1
+                print_debug(f"Deleted '{name}'.")
 
             print_info(f"Deleted {delete_n} labels.")
 
@@ -398,14 +392,10 @@ async def main(*, partial, repository, source, token):
                     await client.request(_MUTATE_LABEL_UPDATE, input=data)
                 except graphql.client.ClientResponseError as e:
                     print_error(f"The request to update label '{name}' failed.", e)
-                    error_n += 1
+                    return 1
 
-                    if error_n == 10:
-                        print_error("Reached error limit. Exiting early.")
-                        return 1
-                else:
-                    update_n += 1
-                    print_debug(f"Updated '{name}'.")
+                update_n += 1
+                print_debug(f"Updated '{name}'.")
             else:
                 skip_n += 1
 
@@ -421,20 +411,12 @@ async def main(*, partial, repository, source, token):
                 await client.request(_MUTATE_LABEL_CREATE, input=data)
             except graphql.client.ClientResponseError as e:
                 print_error(f"The request to create label '{name}' failed.", e)
-                error_n += 1
+                return 1
 
-                if error_n == 10:
-                    print_error("Reached error limit. Exiting early.")
-                    return 1
-            else:
-                create_n += 1
-                print_debug(f"Created '{name}'.")
+            create_n += 1
+            print_debug(f"Created '{name}'.")
 
         print_info(f"Created {create_n} labels.")
-
-        if error_n:
-            print_error(f"There were {error_n} errors during the update flow.")
-            return 1
 
     return 0
 
