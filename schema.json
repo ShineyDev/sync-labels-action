@@ -3,98 +3,191 @@
   "$schema": "https://json-schema.org/draft-07/schema",
   "additionalProperties": false,
   "definitions": {
-    "color_int": {
-      "maximum": 16777215,
-      "minimum": 0,
-      "type": "integer"
+    "color_value": {
+      "oneOf": [
+        {
+          "maximum": 16777215,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "pattern": "^.+(?:[+-][rRgGbBhHsSlL][0-9]+)*$",
+          "type": "string"
+        }
+      ]
+    },
+    "description_value": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "name_value": {
+      "minLength": 1,
+      "type": "string"
     }
   },
   "minProperties": 1,
   "properties": {
     "colors": {
+      "oneOf": [
+        {
+          "additionalItems": false,
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "pattern": "^[a-zA-Z]+$",
+                "type": "string"
+              },
+              "value": {
+                "$ref": "#/definitions/color_value"
+              }
+            },
+            "required": [ "name", "value" ],
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        {
+          "additionalProperties": false,
+          "minProperties": 1,
+          "patternProperties": {
+            "^[a-zA-Z]+$": {
+              "$ref": "#/definitions/color_value"
+            }
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "defaults": {
       "additionalProperties": false,
-      "description": "",
       "minProperties": 1,
-      "patternProperties": {
-        "^.+$": {
-          "$ref": "#/definitions/color_int",
-          "description": ""
+      "properties": {
+        "color": {
+          "$ref": "#/definitions/color_value"
+        },
+        "description": {
+          "$ref": "#/definitions/description_value"
         }
       },
       "type": "object"
     },
     "groups": {
-      "additionalProperties": false,
-      "description": "",
-      "minProperties": 2,
-      "properties": {
-        "color": {
-          "$ref": "#/definitions/color_int",
-          "description": ""
+      "oneOf": [
+        {
+          "additionalItems": false,
+          "items": {
+            "additionalProperties": false,
+            "minProperties": 1,
+            "properties": {
+              "color": {
+                "$ref": "#/definitions/color_value"
+              },
+              "description": {
+                "$ref": "#/definitions/description_value"
+              },
+              "labels": {
+                "$ref": "#/properties/labels"
+              },
+              "name": {
+                "$ref": "#/definitions/name_value"
+              }
+            },
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array"
         },
-        "labels": {
-          "$ref": "#/properties/labels",
-          "description": ""
-        },
-        "name": {
-          "description": "",
-          "minLength": 1,
-          "type": "string"
+        {
+          "additionalProperties": false,
+          "minProperties": 1,
+          "patternProperties": {
+            "^.+$": {
+              "additionalProperties": false,
+              "minProperties": 1,
+              "properties": {
+                "color": {
+                  "$ref": "#/definitions/color_value"
+                },
+                "description": {
+                  "$ref": "#/definitions/description_value"
+                },
+                "labels": {
+                  "$ref": "#/properties/labels"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
         }
-      },
-      "required": [ "name" ],
-      "type": "object"
+      ]
     },
     "inherit": {
-      "additionalItems": false,
-      "description": "",
-      "items": {
-        "description": "",
-        "minLength": 1,
-        "type": "string"
-      },
-      "minItems": 1,
-      "type": "array"
+      "oneOf": [
+        {
+          "additionalItems": false,
+          "items": {
+            "pattern": "^https?:\/\/.+$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        {
+          "pattern": "^https?:\/\/.+$",
+          "type": "string"
+        }
+      ]
     },
     "labels": {
-      "additionalItems": false,
-      "description": "",
-      "items": {
-        "additionalProperties": false,
-        "description": "",
-        "properties": {
-          "color": {
-            "anyOf": [
-              {
-                "$ref": "#/definitions/color_int",
-                "description": ""
+      "oneOf": [
+        {
+          "additionalItems": false,
+          "items": {
+            "additionalProperties": false,
+            "minProperties": 1,
+            "properties": {
+              "color": {
+                "$ref": "#/definitions/color_value"
               },
-              {
-                "description": "",
-                "minLength": 1,
-                "type": "string"
+              "description": {
+                "$ref": "#/definitions/description_value"
+              },
+              "name": {
+                "$ref": "#/definitions/name_value"
               }
-            ]
+            },
+            "required": [ "name" ],
+            "type": "object"
           },
-          "description": {
-            "description": "",
-            "minLength": 1,
-            "type": "string"
-          },
-          "name": {
-            "description": "",
-            "minLength": 1,
-            "type": "string"
-          }
+          "minItems": 1,
+          "type": "array"
         },
-        "required": [ "name" ],
-        "type": "object"
-      },
-      "minItems": 1,
-      "type": "array",
-      "uniqueItems": true
+        {
+          "additionalProperties": false,
+          "minProperties": 1,
+          "patternProperties": {
+            "^.+$": {
+              "additionalProperties": false,
+              "minProperties": 1,
+              "properties": {
+                "color": {
+                  "$ref": "#/definitions/color_value"
+                },
+                "description": {
+                  "$ref": "#/definitions/description_value"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        }
+      ]
     }
   },
-  "title": "ShineyDev/sync-labels-action: labels.yml schema",
+  "title": "ShineyDev/sync-labels-action: data file schema",
   "type": "object"
 }
