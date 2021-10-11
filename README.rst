@@ -1,20 +1,20 @@
 .. raw:: html
 
     <p align="center">
-        <a href="https://github.com/ShineyDev/sync-labels-action/actions?query=workflow%3AAnalyze+event%3Apush">
+        <a href="https://github.com/ShineyDev/sync-labels-action/actions?query=workflow%3AAnalyze">
             <img alt="Analyze Status" src="https://github.com/ShineyDev/sync-labels-action/workflows/Analyze/badge.svg?event=push" />
         </a>
 
-        <a href="https://github.com/ShineyDev/sync-labels-action/actions?query=workflow%3ADeploy+event%3Apush">
+        <a href="https://github.com/ShineyDev/sync-labels-action/actions?query=workflow%3ADeploy">
             <img alt="Deploy Status" src="https://github.com/ShineyDev/sync-labels-action/workflows/Deploy/badge.svg?event=push" />
         </a>
 
-        <a href="https://github.com/ShineyDev/sync-labels-action/actions?query=workflow%3ALint+event%3Apush">
+        <a href="https://github.com/ShineyDev/sync-labels-action/actions?query=workflow%3ALint">
             <img alt="Lint Status" src="https://github.com/ShineyDev/sync-labels-action/workflows/Lint/badge.svg?event=push" />
         </a>
 
-        <a href="https://github.com/ShineyDev/sync-labels-action/actions?query=workflow%3ASync+event%3Apush">
-            <img alt="Sync Status" src="https://github.com/ShineyDev/sync-labels-action/workflows/Sync/badge.svg?event=push" />
+        <a href="https://github.com/ShineyDev/sync-labels-action/actions?query=workflow%3ASync">
+            <img alt="Sync Status" src="https://github.com/ShineyDev/sync-labels-action/workflows/Sync/badge.svg" />
         </a>
     </p>
 
