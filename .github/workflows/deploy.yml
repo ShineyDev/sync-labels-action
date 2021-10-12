@@ -8,28 +8,28 @@ on:
     - released
   workflow_dispatch:
 
+env:
+  AUTH_EMAIL: 30989490+ShineyDev@users.noreply.github.com
+  AUTH_LOGIN: ShineyDev
+  AUTH_TOKEN: ${{ secrets.DOCS_TOKEN }}
+
+  COMMIT_MESSAGE: update docs for ${{ github.repository }}
+
+  PYTHON_VERSION: 3.9
+  SPHINX_OPTIONS: -b dirhtml -a -E -n -T -W --keep-going
+
+  PULL_INSTALL: .[docs]
+  PULL_PATH: docs
+
+  PUSH_REPOSITORY: ${{ github.repository_owner }}/docs.shiney.dev
+  PUSH_ROOT_PATH: ${{ github.event.repository.name }}
+  PUSH_LATEST_PATH: latest
+  PUSH_STABLE_PATH: stable
+
 jobs:
   job:
     name: Deploy
     runs-on: ubuntu-latest
-
-    env:
-      AUTH_EMAIL: 30989490+ShineyDev@users.noreply.github.com
-      AUTH_LOGIN: ShineyDev
-      AUTH_TOKEN: ${{ secrets.DOCS_TOKEN }}
-
-      COMMIT_MESSAGE: update docs for ${{ github.repository }}
-
-      PYTHON_VERSION: 3.9
-      SPHINX_OPTIONS: -b dirhtml -a -E -n -T -W --keep-going
-
-      PULL_INSTALL: .[docs]
-      PULL_PATH: docs
-
-      PUSH_REPOSITORY: ${{ github.repository_owner }}/docs.shiney.dev
-      PUSH_ROOT_PATH: ${{ github.event.repository.name }}
-      PUSH_LATEST_PATH: latest
-      PUSH_STABLE_PATH: stable
 
     steps:
     - name: Checkout ${{ github.repository }}
@@ -67,9 +67,6 @@ jobs:
         if [ -d ./docs/${{ env.PUSH_ROOT_PATH }}/${{ env.PUSH_LATEST_PATH }} ]; then rm -r ./docs/${{ env.PUSH_ROOT_PATH }}/${{ env.PUSH_LATEST_PATH }}; fi
         python -m sphinx ${{ env.SPHINX_OPTIONS }} ./${{ github.event.repository.name }}/${{ env.PULL_PATH }} ./docs/${{ env.PUSH_ROOT_PATH }}/${{ env.PUSH_LATEST_PATH }}
         x=${{ env.PUSH_ROOT_PATH }}/${{ env.PUSH_LATEST_PATH }}; y=$x; while [ $y != ${y%/*} ]; do y=${y%/*}; echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url='"${x#$y/}"'" /></head><body></body></html>' > ./docs/$y/index.html; done
-        if [ ! -f ./docs/index.json ]; then echo {} > ./docs/index.json ; fi
-        jq 'if has("'"${{ env.PUSH_ROOT_PATH }}"'") then (.'"${{ env.PUSH_ROOT_PATH }}"'.latest = "${{ env.PUSH_LATEST_PATH }}" | .'"${{ env.PUSH_ROOT_PATH }}"'.stable = "${{ env.PUSH_STABLE_PATH }}") else (.'"${{ env.PUSH_ROOT_PATH }}"' = {latest: "${{ env.PUSH_LATEST_PATH }}", stable: "${{ env.PUSH_STABLE_PATH }}", tags: []}) end' ./docs/index.json > ./docs/temp.json
-        mv ./docs/temp.json ./docs/index.json
 
     - name: Build
       if: ${{ github.event_name == 'release' }}
@@ -78,9 +75,6 @@ jobs:
         python -m sphinx ${{ env.SPHINX_OPTIONS }} ./${{ github.event.repository.name }}/${{ env.PULL_PATH }} ./docs/${{ env.PUSH_ROOT_PATH }}/${{ github.event.release.tag_name }}
         if [ -h ./docs/${{ env.PUSH_ROOT_PATH }}/${{ env.PUSH_STABLE_PATH }} ]; then rm ./docs/${{ env.PUSH_ROOT_PATH }}/${{ env.PUSH_STABLE_PATH }}; fi
         ln -s ${{ github.event.release.tag_name }} ./docs/${{ env.PUSH_ROOT_PATH }}/${{ env.PUSH_STABLE_PATH }}
-        if [ ! -f ./docs/index.json ]; then echo {} > ./docs/index.json ; fi
-        jq 'if has("'"${{ env.PUSH_ROOT_PATH }}"'") then (.'"${{ env.PUSH_ROOT_PATH }}"'.latest = "${{ env.PUSH_LATEST_PATH }}" | .'"${{ env.PUSH_ROOT_PATH }}"'.stable = "${{ env.PUSH_STABLE_PATH }}" | .'"${{ env.PUSH_ROOT_PATH }}"'.tags |= . + ["${{ github.event.release.tag_name }}"]) else (.'"${{ env.PUSH_ROOT_PATH }}"' = {latest: "${{ env.PUSH_LATEST_PATH }}", stable: "${{ env.PUSH_STABLE_PATH }}", tags: ["${{ github.event.release.tag_name }}"]}) end' ./docs/index.json > ./docs/temp.json
-        mv ./docs/temp.json ./docs/index.json
 
     - name: Push
       if: ${{ github.event_name != 'pull_request' }}
