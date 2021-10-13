@@ -5,6 +5,9 @@ on:
     paths:
     - .github/data/labels.yml
     - .github/workflows/sync.yml
+    - action.yml
+    - script.py
+    - requirements.txt
   schedule:
   - cron: 0 0 * * *
   workflow_dispatch:
