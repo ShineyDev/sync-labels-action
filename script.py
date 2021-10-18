@@ -236,7 +236,11 @@ async def main(*, partial, repository, source, token):
         print_error("The source you provided is not valid.", e)
         return 1
 
+    # TODO: handle offsets in colors
+
     default_color = defaults.get("color", None)
+    # TODO: handle offsets
+
     default_description = defaults.get("description", None)
 
     print_info("Populating requested labels.")
