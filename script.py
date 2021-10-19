@@ -80,11 +80,11 @@ print_error = _create_printer(
 
 
 # fmt: off
-_MUTATE_LABEL_CREATE = "mutation($input:CreateLabelInput!){createLabel(input:$input){__typename}}"
-_MUTATE_LABEL_DELETE = "mutation($input:DeleteLabelInput!){deleteLabel(input:$input){__typename}}"
-_MUTATE_LABEL_UPDATE = "mutation($input:UpdateLabelInput!){updateLabel(input:$input){__typename}}"
-_QUERY_REPOSITORY_ID = "query($owner:String!,$name:String!){repository(owner:$owner,name:$name){id}}"
-_QUERY_REPOSITORY_LABELS_PAGE = "query($cursor:String,$repository_id:ID!){node(id:$repository_id){...on Repository{labels(after:$cursor,first:30){pageInfo{endCursor,hasNextPage}nodes{color,description,id,name}}}}}"
+MUTATE_LABEL_CREATE = "mutation($input:CreateLabelInput!){createLabel(input:$input){__typename}}"
+MUTATE_LABEL_DELETE = "mutation($input:DeleteLabelInput!){deleteLabel(input:$input){__typename}}"
+MUTATE_LABEL_UPDATE = "mutation($input:UpdateLabelInput!){updateLabel(input:$input){__typename}}"
+QUERY_REPOSITORY_ID = "query($owner:String!,$name:String!){repository(owner:$owner,name:$name){id}}"
+QUERY_REPOSITORY_LABELS_PAGE = "query($cursor:String,$repository_id:ID!){node(id:$repository_id){...on Repository{labels(after:$cursor,first:30){pageInfo{endCursor,hasNextPage}nodes{color,description,id,name}}}}}"
 # fmt: on
 
 
@@ -353,7 +353,7 @@ async def main(*, partial, repository, source, token):
         owner, name = repository.split("/")
 
         try:
-            data = await client.request(_QUERY_REPOSITORY_ID, owner=owner, name=name)
+            data = await client.request(QUERY_REPOSITORY_ID, owner=owner, name=name)
         except graphql.client.ClientResponseError as e:
             print_error("The request to fetch your repository identifier failed.", e)
             return 1
@@ -377,7 +377,7 @@ async def main(*, partial, repository, source, token):
         while has_next_page:
             try:
                 data = await client.request(
-                    _QUERY_REPOSITORY_LABELS_PAGE, cursor=cursor, repository_id=repository_id
+                    QUERY_REPOSITORY_LABELS_PAGE, cursor=cursor, repository_id=repository_id
                 )
             except graphql.client.ClientResponseError as e:
                 print_error("The request to fetch your repository labels failed.", e)
@@ -399,7 +399,7 @@ async def main(*, partial, repository, source, token):
                 data = {"id": existing_labels[name]["id"]}
 
                 try:
-                    await client.request(_MUTATE_LABEL_DELETE, input=data)
+                    await client.request(MUTATE_LABEL_DELETE, input=data)
                 except graphql.client.ClientResponseError as e:
                     print_error(f"The request to delete label '{name}' failed.", e)
                     return 1
@@ -425,7 +425,7 @@ async def main(*, partial, repository, source, token):
                 data["id"] = existing_data["id"]
 
                 try:
-                    await client.request(_MUTATE_LABEL_UPDATE, input=data)
+                    await client.request(MUTATE_LABEL_UPDATE, input=data)
                 except graphql.client.ClientResponseError as e:
                     print_error(f"The request to update label '{name}' failed.", e)
                     return 1
@@ -444,7 +444,7 @@ async def main(*, partial, repository, source, token):
             data["repositoryId"] = repository_id
 
             try:
-                await client.request(_MUTATE_LABEL_CREATE, input=data)
+                await client.request(MUTATE_LABEL_CREATE, input=data)
             except graphql.client.ClientResponseError as e:
                 print_error(f"The request to create label '{name}' failed.", e)
                 return 1
