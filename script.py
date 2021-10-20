@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import collections
+import re
 import sys
 import textwrap
 import traceback
@@ -77,6 +78,9 @@ print_warning = _create_printer(level=2, prefix="\x1B[33m[WARNING]\x1B[39m ", su
 print_error = _create_printer(
     level=1, prefix="  \x1B[31m[ERROR] ", stream=sys.stderr, suffix="\x1B[39m"
 )
+
+
+_color_pattern = re.compile("([a-z]+)((?:[+-][rgbhsl][0-9]+)*)")
 
 
 # fmt: off
@@ -236,10 +240,66 @@ async def main(*, partial, repository, source, token):
         print_error("The source you provided is not valid.", e)
         return 1
 
+    def get_color(value, palette):
+        if isinstance(value, int):
+            return value
+
+        match = re.fullmatch(_color_pattern, value)
+        if not match:
+            raise ValueError(f"The color value '{value}' is not valid.")
+
+        base_string = match.group(1)
+        offset_string = match.group(2)
+
+        base_color = palette[base_string]
+
+        if offset_string is None:
+            return base_color
+
+        ...  # TODO: handle offsets
+
     # TODO: handle offsets in colors
+    #
+    #       if i have:
+    #
+    #           red: 0xFF0000
+    #           green: blue-B255+G255
+    #           blue: red-R255+B255
+    #
+    #       i must:
+    #
+    #           1. read red directly
+    #           2. attempt to offset green from blue and fail silently
+    #           3. offset blue from red
+    #           4. loopback
+    #           5. offset green from blue
+    #
+    #       if i have:
+    #
+    #           red: green-G255+R255
+    #           green: blue-B255+G255
+    #           blue: red-R255+B255
+    #
+    #       i must:
+    #
+    #           1. attempt to offset red from green and fail silently
+    #           2. attempt to offset green from blue and fail silently
+    #           3. attempt to offset blue from red and fail silently
+    #           4. loopback
+    #           5. fail loudly
+
+    ...
 
     default_color = defaults.get("color", None)
-    # TODO: handle offsets
+    if default_color:
+        try:
+            default_color = get_color(default_color, colors)
+        except BaseException as e:
+            print_error(
+                f"The default color requests color '{default_color}' which is not valid",
+                e
+            )
+            return 1
 
     default_description = defaults.get("description", None)
 
@@ -258,14 +318,11 @@ async def main(*, partial, repository, source, token):
             return 1
 
         if isinstance(label_color, str):
-            # TODO: handle offsets
-
             try:
-                label_color = colors[label_color]
-            except KeyError as e:
+                label_color = get_color(label_color, colors)
+            except BaseException as e:
                 print_error(
-                    f"The label '{label_name}' requests color '{label_color}' which does not "
-                    "exist.",
+                    f"The label '{label_name}' requests color '{label_color}' which is not valid.",
                     e,
                 )
                 return 1
@@ -310,13 +367,11 @@ async def main(*, partial, repository, source, token):
                 return 1
 
             if isinstance(label_color, str):
-                # TODO: handle offsets
-
                 try:
-                    label_color = colors[label_color]
-                except KeyError as e:
+                    label_color = get_color(label_color, colors)
+                except BaseException as e:
                     print_error(
-                        f"The label '{label_name}' in group '{group_name}' requests color '{label_color}' which does not exist.",
+                        f"The label '{label_name}' in group '{group_name}' requests color '{label_color}' which is not valid.",
                         e,
                     )
                     return 1
