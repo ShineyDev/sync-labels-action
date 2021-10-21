@@ -295,10 +295,7 @@ async def main(*, partial, repository, source, token):
         try:
             default_color = get_color(default_color, colors)
         except BaseException as e:
-            print_error(
-                f"The default color requests color '{default_color}' which is not valid",
-                e
-            )
+            print_error(f"The default color requests color '{default_color}' which is not valid", e)
             return 1
 
     default_description = defaults.get("description", None)
@@ -362,7 +359,8 @@ async def main(*, partial, repository, source, token):
             label_color = label_data["color"] or group_color or default_color
             if label_color is None:
                 print_error(
-                    f"The label '{label_name}' in group '{group_name}' does not have a color and no default was provided."
+                    f"The label '{label_name}' in group '{group_name}' does not have a color and "
+                    f"no default was provided."
                 )
                 return 1
 
@@ -371,7 +369,8 @@ async def main(*, partial, repository, source, token):
                     label_color = get_color(label_color, colors)
                 except BaseException as e:
                     print_error(
-                        f"The label '{label_name}' in group '{group_name}' requests color '{label_color}' which is not valid.",
+                        f"The label '{label_name}' in group '{group_name}' requests color "
+                        f"'{label_color}' which is not valid.",
                         e,
                     )
                     return 1
@@ -417,7 +416,8 @@ async def main(*, partial, repository, source, token):
             repository_id = data["repository"]["id"]
         except KeyError as e:
             print_error(
-                "The repository you provided does not exist or the token you provided cannot see it.",
+                "The repository you provided does not exist or the token you provided cannot see "
+                "it.",
                 e,
             )
             return 1
@@ -531,7 +531,8 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
         add_help=False,
-        description="A Python script for synchronizing your GitHub repository labels with a labels.yml file.",
+        description="A Python script for synchronizing your GitHub repository labels with a "
+        "labels.yml file.",
         epilog="See the documentation at <https://docs.shiney.dev/sync-labels-action>.",
         formatter_class=HelpFormatter,
     )
