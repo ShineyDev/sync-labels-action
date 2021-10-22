@@ -256,7 +256,7 @@ async def main(*, partial, repository, source, token):
         if offset_string is None:
             return base_color
 
-        ...  # TODO: handle offsets
+        raise NotImplementedError  # TODO: handle offsets
 
     # TODO: handle offsets in colors
     #
