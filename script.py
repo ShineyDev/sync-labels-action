@@ -258,37 +258,69 @@ async def main(*, partial, repository, source, token):
 
         raise NotImplementedError  # TODO: handle offsets
 
-    # TODO: handle offsets in colors
+    # if i have:
+    #     red: 0xFF0000
+    #     green: 0x00FF00
+    #     blue: 0x0000FF
     #
-    #       if i have:
+    # i must:
+    #     1. read red directly (fails=0, passes=1)
+    #     2. read green directly (fails=0, passes=2)
+    #     3. read blue directly (fails=0, passes=3)
+    #     4. break (because passes!=0 and fails=0)
     #
-    #           red: 0xFF0000
-    #           green: blue-B255+G255
-    #           blue: red-R255+B255
+    # if i have:
+    #     red: 0xFF0000
+    #     green: blue-B255+G255
+    #     blue: red-R255+B255
     #
-    #       i must:
+    # i must:
+    #     1. read red directly (fails=0, passes=1)
+    #     2. attempt to offset green from blue and fail silently (fails=1, passes=1)
+    #     3. offset blue from red (fails=1, passes=2)
+    #     4. loopback (because passes!=0 and fails!=0)
+    #     5. offset green from blue (fails=0, passes=1)
+    #     6. break (because passes!=0 and fails=0)
     #
-    #           1. read red directly
-    #           2. attempt to offset green from blue and fail silently
-    #           3. offset blue from red
-    #           4. loopback
-    #           5. offset green from blue
+    # if i have:
+    #     red: green-G255+R255
+    #     green: blue-B255+G255
+    #     blue: red-R255+B255
     #
-    #       if i have:
+    # i must:
+    #     1. attempt to offset red from green and fail silently (fails=1, passes=0)
+    #     2. attempt to offset green from blue and fail silently (fails=2, passes=0)
+    #     3. attempt to offset blue from red and fail silently (fails=3, passes=0)
+    #     5. fail loudly (because passes=0 and fails!=0)
     #
-    #           red: green-G255+R255
-    #           green: blue-B255+G255
-    #           blue: red-R255+B255
+    # if i have:
+    #     an empty dictionary
     #
-    #       i must:
-    #
-    #           1. attempt to offset red from green and fail silently
-    #           2. attempt to offset green from blue and fail silently
-    #           3. attempt to offset blue from red and fail silently
-    #           4. loopback
-    #           5. fail loudly
+    # i must:
+    #     1. break (because passes=0 but fails=0, and fails=0)
 
-    ...
+    while True:
+        fails = 0
+        passes = 0
+
+        for (key, value) in colors.items():
+            if isinstance(value, int):
+                continue
+
+            try:
+                value = get_color(value)
+            except BaseException as e:
+                fails += 1
+            else:
+                passes += 1
+                colors[key] = value
+
+        if not passes and fails:
+            keys = [key for (key, value) in colors.items() if not isinstance(value, int)]
+            print_error(f"The color keys {keys} are recursive.")
+            return 1
+        elif not fails:
+            break
 
     default_color = defaults.get("color", None)
     if default_color:
