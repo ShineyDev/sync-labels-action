@@ -253,7 +253,7 @@ async def main(*, partial, repository, source, token):
 
         base_color = palette[base_string]
 
-        if offset_string is None:
+        if not offset_string:
             return base_color
 
         raise NotImplementedError  # TODO: handle offsets
@@ -267,7 +267,7 @@ async def main(*, partial, repository, source, token):
                 continue
 
             try:
-                value = get_color(value)
+                value = get_color(value, colors)
             except BaseException as e:
                 fails += 1
             else:
