@@ -80,9 +80,6 @@ print_error = _create_printer(
 )
 
 
-_color_pattern = re.compile("([a-z]+)((?:[+-][rgbhsl][0-9]+)*)")
-
-
 # fmt: off
 MUTATE_LABEL_CREATE = "mutation($input:CreateLabelInput!){createLabel(input:$input){__typename}}"
 MUTATE_LABEL_DELETE = "mutation($input:DeleteLabelInput!){deleteLabel(input:$input){__typename}}"
@@ -240,23 +237,61 @@ async def main(*, partial, repository, source, token):
         print_error("The source you provided is not valid.", e)
         return 1
 
-    def get_color(value, palette):
-        if isinstance(value, int):
-            return value
+    def get_color(color, palette):
+        if isinstance(color, int):
+            return color
 
-        match = re.fullmatch(_color_pattern, value)
+        match = re.fullmatch("([a-z]+)((?:[+-][rgbhsl][0-9]+)*)", color, re.IGNORECASE)
         if not match:
-            raise ValueError(f"The color value '{value}' is not valid.")
+            raise ValueError(f"The color value '{color}' is not valid.")
 
         base_string = match.group(1)
         offset_string = match.group(2)
 
-        base_color = palette[base_string]
+        base_color = min(max(palette[base_string], 0), 0xFFFFFF)
 
         if not offset_string:
             return base_color
 
-        raise NotImplementedError  # TODO: handle offsets
+        offsets = re.findall("([+-])([rgbhsl])([0-9]+)", offset_string, re.IGNORECASE)
+        for (operator, component, value) in offsets:
+            if operator == "+":
+                operator = int.__add__
+            else:
+                operator = int.__sub__
+
+            component = component.lower()
+
+            if component == "h":
+                value_max = 359
+            elif component in ("s", "l"):
+                value_max = 100
+            else:
+                value_max = 255
+
+            clamp = lambda v: min(max(v, 0), value_max)
+
+            value = int(value)
+
+            components = {
+                "r": base_color >> 16 & 0xFF,
+                "g": base_color >> 8 & 0xFF,
+                "b": base_color & 0xFF,
+            }
+
+            if component in ("h", "s", "l"):
+                h, s, l = rgb_to_hsl(components["r"], components["g"], components["b"])
+                components.update({"h": h, "s": s, "l": l})
+
+            components[component] = clamp(operator(components[component], value))
+
+            if component in ("h", "s", "l"):
+                r, g, b = hsl_to_rgb(components["h"], components["s"], components["l"])
+                components.update({"r": r, "g": g, "b": b})
+
+            base_color = components["r"] << 16 + components["g"] << 8 + components["b"]
+
+        return base_color
 
     while True:
         fails = 0
