@@ -303,7 +303,7 @@ async def main(*, partial, repository, source, token):
 
             try:
                 value = get_color(value, colors)
-            except BaseException as e:
+            except TypeError as e:
                 fails += 1
             else:
                 passes += 1
