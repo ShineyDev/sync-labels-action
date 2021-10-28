@@ -196,6 +196,10 @@ async def main(*, partial, repository, source, token):
 
                                 existing_group["labels"].append(data)
                     else:
+                        for label_data in group_labels:
+                            label_data.setdefault("color", None)
+                            label_data.setdefault("description", None)
+
                         data = {
                             "name": group_name,
                             "color": group_color,
