@@ -384,7 +384,7 @@ async def main(*, partial, repository, source, token):
         label_description = label_data["description"] or default_description
 
         requested_labels[label_name] = {
-            "color": label_color,
+            "color": f"{label_color:>06X}",
             "description": label_description,
         }
 
@@ -446,7 +446,7 @@ async def main(*, partial, repository, source, token):
                 return 1
 
             requested_labels[label_name] = {
-                "color": label_color,
+                "color": f"{label_color:>06X}",
                 "description": label_description,
             }
 
