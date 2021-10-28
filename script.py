@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import collections
+import colorsys
 import re
 import sys
 import textwrap
@@ -236,6 +237,32 @@ async def main(*, partial, repository, source, token):
     except (OSError, aiohttp.ClientResponseError, yaml.YAMLError) as e:
         print_error("The source you provided is not valid.", e)
         return 1
+
+    def hsl_to_rgb(h, s, l):
+        h /= 360
+        s /= 100
+        l /= 100
+
+        r, g, b = colorsys.hls_to_rgb(h, l, s)
+
+        r = int(round(r * 255, 0))
+        g = int(round(g * 255, 0))
+        b = int(round(b * 255, 0))
+
+        return (r, g, b)
+
+    def rgb_to_hsl(r, g, b):
+        r /= 255
+        g /= 255
+        b /= 255
+
+        h, l, s = colorsys.rgb_to_hls(r, g, b)
+
+        h = int(h * 360)
+        s = int(s * 100)
+        l = int(l * 100)
+
+        return (h, s, l)
 
     def get_color(color, palette):
         if isinstance(color, int):
