@@ -242,12 +242,12 @@ async def main(*, partial, repository, source, token):
         print_error("The source you provided is not valid.", e)
         return 1
 
-    def hsl_to_rgb(h, s, l):
+    def hsv_to_rgb(h, s, v):
         h /= 360
         s /= 100
-        l /= 100
+        v /= 100
 
-        r, g, b = colorsys.hls_to_rgb(h, l, s)
+        r, g, b = colorsys.hsv_to_rgb(h, s, v)
 
         r = int(round(r * 255, 0))
         g = int(round(g * 255, 0))
@@ -255,24 +255,24 @@ async def main(*, partial, repository, source, token):
 
         return (r, g, b)
 
-    def rgb_to_hsl(r, g, b):
+    def rgb_to_hsv(r, g, b):
         r /= 255
         g /= 255
         b /= 255
 
-        h, l, s = colorsys.rgb_to_hls(r, g, b)
+        h, s, v = colorsys.rgb_to_hsv(r, g, b)
 
         h = int(h * 360)
         s = int(s * 100)
-        l = int(l * 100)
+        v = int(v * 100)
 
-        return (h, s, l)
+        return (h, s, v)
 
     def get_color(color, palette):
         if isinstance(color, int):
             return color
 
-        match = re.fullmatch("([a-z]+)((?:[+-][rgbhsl][0-9]+)*)", color, re.IGNORECASE)
+        match = re.fullmatch("([a-z]+)((?:[+-][rgbhsv][0-9]+)*)", color, re.IGNORECASE)
         if not match:
             raise ValueError(f"The color value '{color}' is not valid.")
 
@@ -284,7 +284,7 @@ async def main(*, partial, repository, source, token):
         if not offset_string:
             return base_color
 
-        offsets = re.findall("([+-])([rgbhsl])([0-9]+)", offset_string, re.IGNORECASE)
+        offsets = re.findall("([+-])([rgbhsv])([0-9]+)", offset_string, re.IGNORECASE)
         for (operator, component, value) in offsets:
             if operator == "+":
                 operator = int.__add__
@@ -295,7 +295,7 @@ async def main(*, partial, repository, source, token):
 
             if component == "h":
                 value_max = 359
-            elif component in ("s", "l"):
+            elif component in ("s", "v"):
                 value_max = 100
             else:
                 value_max = 255
@@ -310,17 +310,17 @@ async def main(*, partial, repository, source, token):
                 "b": base_color & 0xFF,
             }
 
-            if component in ("h", "s", "l"):
-                h, s, l = rgb_to_hsl(components["r"], components["g"], components["b"])
-                components.update({"h": h, "s": s, "l": l})
+            if component in ("h", "s", "v"):
+                h, s, v = rgb_to_hsv(components["r"], components["g"], components["b"])
+                components.update({"h": h, "s": s, "v": v})
 
             components[component] = clamp(operator(components[component], value))
 
-            if component in ("h", "s", "l"):
-                r, g, b = hsl_to_rgb(components["h"], components["s"], components["l"])
+            if component in ("h", "s", "v"):
+                r, g, b = hsv_to_rgb(components["h"], components["s"], components["v"])
                 components.update({"r": r, "g": g, "b": b})
 
-            base_color = components["r"] << 16 + components["g"] << 8 + components["b"]
+            base_color = components["r"] << 16 | components["g"] << 8 | components["b"]
 
         return base_color
 
