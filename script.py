@@ -324,6 +324,8 @@ async def main(*, partial, repository, source, token):
 
         return base_color
 
+    print_info("Populating colors.")
+
     while True:
         fails = 0
         passes = 0
@@ -565,6 +567,9 @@ async def main(*, partial, repository, source, token):
             print_debug(f"Created '{name}'.")
 
         print_info(f"Created {create_n} labels.")
+
+        if skip_n:
+            print_info(f"Skipped {skip_n} labels.")
 
     return 0
 
