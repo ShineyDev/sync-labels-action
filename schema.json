@@ -129,14 +129,14 @@
         {
           "additionalItems": false,
           "items": {
-            "pattern": "^https?:\/\/.+$",
+            "pattern": "^https?:\\/\\/.+$",
             "type": "string"
           },
           "minItems": 1,
           "type": "array"
         },
         {
-          "pattern": "^https?:\/\/.+$",
+          "pattern": "^https?:\\/\\/.+$",
           "type": "string"
         }
       ]
