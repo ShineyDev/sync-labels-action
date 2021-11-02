@@ -359,21 +359,24 @@ async def main(*, partial, repository, source, token):
         label_name = label_data["name"]
 
         label_color = label_data["color"] or default_color
-        if label_color is None:
+
+        if partial:
+            pass
+        elif label_color is None:
             print_error(f"The label '{label_name}' does not have a color and no default was provided.")
             return 1
-
-        if isinstance(label_color, str):
-            try:
-                label_color = get_color(label_color, colors)
-            except BaseException as e:
-                print_error(f"The label '{label_name}' requests color '{label_color}' which is not valid.", e)
-                return 1
+        else:
+            if isinstance(label_color, str):
+                try:
+                    label_color = get_color(label_color, colors)
+                except BaseException as e:
+                    print_error(f"The label '{label_name}' requests color '{label_color}' which is not valid.", e)
+                    return 1
 
         label_description = label_data["description"] or default_description
 
         requested_labels[label_name] = {
-            "color": f"{label_color:>06X}",
+            "color": f"{label_color:>06X}" if label_color else None,
             "description": label_description,
         }
 
@@ -399,16 +402,19 @@ async def main(*, partial, repository, source, token):
             label_name = label_data["name"]
 
             label_color = label_data["color"] or group_color or default_color
-            if label_color is None:
+
+            if partial:
+                pass
+            elif label_color is None:
                 print_error(f"The label '{label_name}' in group '{group_name}' does not have a color and no default was provided.")
                 return 1
-
-            if isinstance(label_color, str):
-                try:
-                    label_color = get_color(label_color, colors)
-                except BaseException as e:
-                    print_error(f"The label '{label_name}' in group '{group_name}' requests color '{label_color}' which is not valid.", e)
-                    return 1
+            else:
+                if isinstance(label_color, str):
+                    try:
+                        label_color = get_color(label_color, colors)
+                    except BaseException as e:
+                        print_error(f"The label '{label_name}' in group '{group_name}' requests color '{label_color}' which is not valid.", e)
+                        return 1
 
             label_description = label_data["description"] or group_description or default_description
 
@@ -420,7 +426,7 @@ async def main(*, partial, repository, source, token):
                 return 1
 
             requested_labels[label_name] = {
-                "color": f"{label_color:>06X}",
+                "color": f"{label_color:>06X}" if label_color else None,
                 "description": label_description,
             }
 
@@ -498,7 +504,9 @@ async def main(*, partial, repository, source, token):
             data = dict()
 
             for (key, value) in requested_data.items():
-                if value != existing_data[key]:
+                if partial and value is None:
+                    pass
+                elif value != existing_data[key]:
                     data[key] = value
 
             if data:
