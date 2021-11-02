@@ -19,8 +19,8 @@ except ImportError:
 
 _VersionInfo = collections.namedtuple("_VersionInfo", "major minor micro release serial")
 
-version = "1.0.0"
-version_info = _VersionInfo(1, 0, 0, "final", 0)
+version = "1.1.0"
+version_info = _VersionInfo(1, 1, 0, "final", 0)
 
 
 _printers = list()
