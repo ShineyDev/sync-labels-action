@@ -53,13 +53,7 @@ def _create_printer(*, level=None, prefix=None, suffix=None, stream=None):
                 args = [suffix]
 
         if e is not None:
-            args.append(
-                "\n\n"
-                + textwrap.indent(
-                    "".join(traceback.format_exception(type(e), e, e.__traceback__)),
-                    "    ",
-                )
-            )
+            args.append("\n\n" + textwrap.indent("".join(traceback.format_exception(type(e), e, e.__traceback__)), "    "))
 
         print(*args, file=file, **kwargs)
 
@@ -76,9 +70,7 @@ def _create_printer(*, level=None, prefix=None, suffix=None, stream=None):
 print_debug = _create_printer(level=4, prefix="  \x1B[32m[DEBUG]\x1B[39m ", suffix="")
 print_info = _create_printer(level=3, prefix="   \x1B[34m[INFO]\x1B[39m ", suffix="")
 print_warning = _create_printer(level=2, prefix="\x1B[33m[WARNING]\x1B[39m ", suffix="")
-print_error = _create_printer(
-    level=1, prefix="  \x1B[31m[ERROR] ", stream=sys.stderr, suffix="\x1B[39m"
-)
+print_error = _create_printer(level=1, prefix="  \x1B[31m[ERROR] ", stream=sys.stderr, suffix="\x1B[39m")
 
 
 # fmt: off
@@ -368,19 +360,14 @@ async def main(*, partial, repository, source, token):
 
         label_color = label_data["color"] or default_color
         if label_color is None:
-            print_error(
-                f"The label '{label_name}' does not have a color and no default was provided."
-            )
+            print_error(f"The label '{label_name}' does not have a color and no default was provided.")
             return 1
 
         if isinstance(label_color, str):
             try:
                 label_color = get_color(label_color, colors)
             except BaseException as e:
-                print_error(
-                    f"The label '{label_name}' requests color '{label_color}' which is not valid.",
-                    e,
-                )
+                print_error(f"The label '{label_name}' requests color '{label_color}' which is not valid.", e)
                 return 1
 
         label_description = label_data["description"] or default_description
@@ -399,11 +386,7 @@ async def main(*, partial, repository, source, token):
         if group_name:
             group_prefix_length = 1
             group_prefix = group_name[:group_prefix_length]
-            while any(
-                g["name"].startswith(group_prefix)
-                for g in groups
-                if g["name"] and g["name"] != group_name and g["labels"]
-            ):
+            while any(g["name"].startswith(group_prefix) for g in groups if g["name"] and g["name"] != group_name and g["labels"]):
                 group_prefix_length += 1
                 group_prefix = group_name[:group_prefix_length]
 
@@ -417,34 +400,23 @@ async def main(*, partial, repository, source, token):
 
             label_color = label_data["color"] or group_color or default_color
             if label_color is None:
-                print_error(
-                    f"The label '{label_name}' in group '{group_name}' does not have a color and "
-                    f"no default was provided."
-                )
+                print_error(f"The label '{label_name}' in group '{group_name}' does not have a color and no default was provided.")
                 return 1
 
             if isinstance(label_color, str):
                 try:
                     label_color = get_color(label_color, colors)
                 except BaseException as e:
-                    print_error(
-                        f"The label '{label_name}' in group '{group_name}' requests color "
-                        f"'{label_color}' which is not valid.",
-                        e,
-                    )
+                    print_error(f"The label '{label_name}' in group '{group_name}' requests color '{label_color}' which is not valid.", e)
                     return 1
 
-            label_description = (
-                label_data["description"] or group_description or default_description
-            )
+            label_description = label_data["description"] or group_description or default_description
 
             if group_prefix:
                 label_name = f"{group_prefix}:{label_name}"
 
             if label_name in requested_labels.keys():
-                print_error(
-                    f"The group '{group_name}' defines label '{label_name}' which already exists."
-                )
+                print_error(f"The group '{group_name}' defines label '{label_name}' which already exists.")
                 return 1
 
             requested_labels[label_name] = {
@@ -474,11 +446,7 @@ async def main(*, partial, repository, source, token):
         try:
             repository_id = data["repository"]["id"]
         except KeyError as e:
-            print_error(
-                "The repository you provided does not exist or the token you provided cannot see "
-                "it.",
-                e,
-            )
+            print_error("The repository you provided does not exist or the token you provided cannot see it.", e)
             return 1
 
         print_info("Populating existing labels.")
@@ -490,9 +458,7 @@ async def main(*, partial, repository, source, token):
 
         while has_next_page:
             try:
-                data = await client.request(
-                    QUERY_REPOSITORY_LABELS_PAGE, cursor=cursor, repository_id=repository_id
-                )
+                data = await client.request(QUERY_REPOSITORY_LABELS_PAGE, cursor=cursor, repository_id=repository_id)
             except graphql.client.ClientResponseError as e:
                 print_error("The request to fetch your repository labels failed.", e)
                 return 1
@@ -593,8 +559,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
         add_help=False,
-        description="A Python script for synchronizing your GitHub repository labels with a "
-        "labels.yml file.",
+        description="A Python script for synchronizing your GitHub repository labels with a " "labels.yml file.",
         epilog="See the documentation at <https://docs.shiney.dev/sync-labels-action>.",
         formatter_class=HelpFormatter,
     )
@@ -602,9 +567,7 @@ if __name__ == "__main__":
     class UsageAction(argparse._HelpAction):
         def __call__(self, parser, namespace, values, option_string=None):
             formatter = parser._get_formatter()
-            usage = formatter._format_usage(
-                parser.usage, parser._actions, parser._mutually_exclusive_groups, prefix=""
-            )
+            usage = formatter._format_usage(parser.usage, parser._actions, parser._mutually_exclusive_groups, prefix="")
             parser._print_message(usage, sys.stdout)
             parser.exit()
 
