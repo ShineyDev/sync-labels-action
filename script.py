@@ -24,10 +24,15 @@ version_info = _VersionInfo(1, 1, 0, "final", 0)
 
 
 _printers = list()
+_last_id = None
+_last_suffix = None
 
 
-def _create_printer(*, level=None, prefix=None, suffix=None, stream=None):
+def _create_printer(*, id=None, level=None, prefix=None, suffix=None, stream=None):
     def printer(*args, **kwargs):
+        prefix_ = prefix
+        suffix_ = suffix
+
         if not printer.is_active:
             return
 
@@ -40,22 +45,42 @@ def _create_printer(*, level=None, prefix=None, suffix=None, stream=None):
 
         file = kwargs.pop("file", stream) or sys.stdout
 
-        if prefix:
-            if args:
-                args[0] = prefix + (args[0] if isinstance(args[0], str) else repr(args[0]))
-            else:
-                args = [prefix]
+        global _last_id
+        global _last_suffix
 
-        if suffix:
+        if id and _last_id == id:
+            prefix_ = None
+        elif _last_id:
+            prefix_ = _last_suffix + ("\n" + prefix_ if prefix_ is not None else "\n")
+
+        _last_id = None
+
+        end = kwargs.pop("end", "\n")
+        if not end.endswith("\n"):
+            _last_id = id
+            _last_suffix = suffix_
+            suffix_ = None
+
+        if prefix_:
+            prefix_ = prefix_.format(id=id)
+
             if args:
-                args[-1] = (args[-1] if isinstance(args[-1], str) else repr(args[-1])) + suffix
+                args[0] = prefix_ + (args[0] if isinstance(args[0], str) else repr(args[0]))
             else:
-                args = [suffix]
+                args = [prefix_]
+
+        if suffix_:
+            suffix_ = suffix_.format(id=id)
+
+            if args:
+                args[-1] = (args[-1] if isinstance(args[-1], str) else repr(args[-1])) + suffix_
+            else:
+                args = [suffix_]
 
         if e is not None:
             args.append("\n\n" + textwrap.indent("".join(traceback.format_exception(type(e), e, e.__traceback__)), "    "))
 
-        print(*args, file=file, **kwargs)
+        print(*args, end=end, file=file, **kwargs)
 
     printer.is_active = True
     if level is not None:
@@ -67,10 +92,10 @@ def _create_printer(*, level=None, prefix=None, suffix=None, stream=None):
     return printer
 
 
-print_debug = _create_printer(level=4, prefix="  \x1B[32m[DEBUG]\x1B[39m ", suffix="")
-print_info = _create_printer(level=3, prefix="   \x1B[34m[INFO]\x1B[39m ", suffix="")
-print_warning = _create_printer(level=2, prefix="\x1B[33m[WARNING]\x1B[39m ", suffix="")
-print_error = _create_printer(level=1, prefix="  \x1B[31m[ERROR] ", stream=sys.stderr, suffix="\x1B[39m")
+print_debug = _create_printer(id="DEBUG", level=4, prefix="  \x1B[32m[{id}]\x1B[39m ", suffix="")
+print_info = _create_printer(id="INFO", level=3, prefix="   \x1B[34m[{id}]\x1B[39m ", suffix="")
+print_warning = _create_printer(id="WARNING", level=2, prefix="\x1B[33m[{id}]\x1B[39m ", suffix="")
+print_error = _create_printer(id="ERROR", level=1, prefix="  \x1B[31m[{id}] ", stream=sys.stderr, suffix="\x1B[39m")
 
 
 # fmt: off
