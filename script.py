@@ -80,8 +80,7 @@ def _create_printer(*, id=None, level=None, prefix=None, suffix=None, stream=Non
         if e is not None:
             args.append("\n\n" + textwrap.indent("".join(traceback.format_exception(type(e), e, e.__traceback__)), "    "))
 
-        prefix_ = re.sub("\x1B\\[[0-9;]+m", "", prefix_)
-        indent = " " * len(prefix_) if prefix_ else ""
+        indent = " " * len(re.sub("\x1B\\[[0-9;]+m", "", prefix_)) if prefix_ else ""
         args = [a.replace("\n", "\n" + indent) for a in args]
 
         print(*args, end=end, file=file, **kwargs)
