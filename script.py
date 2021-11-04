@@ -98,7 +98,8 @@ def _create_printer(*, id=None, level=None, prefix=None, suffix=None, stream=Non
 print_debug = _create_printer(id="DEBUG", level=4, prefix="  \x1B[32m[{id}]\x1B[39m ", suffix="")
 print_info = _create_printer(id="INFO", level=3, prefix="   \x1B[34m[{id}]\x1B[39m ", suffix="")
 print_warning = _create_printer(id="WARNING", level=2, prefix="\x1B[33m[{id}]\x1B[39m ", suffix="")
-print_error = _create_printer(id="ERROR", level=1, prefix="  \x1B[31m[{id}] ", stream=sys.stderr, suffix="\x1B[39m")
+print_error = _create_printer(id="ERROR", level=1, prefix="  \x1B[31m[{id}]\x1B[39m", stream=sys.stderr, suffix="")
+print_fatal = _create_printer(id="FATAL", level=1, prefix="  \x1B[31m[{id}] ", stream=sys.stderr, suffix="\x1B[39m")
 
 
 # fmt: off
@@ -259,7 +260,7 @@ async def main(*, partial, repository, source, token):
 
                         labels.append(data)
     except (OSError, aiohttp.ClientResponseError, yaml.YAMLError) as e:
-        print_error("The source you provided is not valid.", e)
+        print_fatal("The source you provided is not valid.", e)
         return 1
 
     def hsv_to_rgb(h, s, v):
@@ -364,7 +365,7 @@ async def main(*, partial, repository, source, token):
 
         if not passes and fails:
             keys = [key for (key, value) in colors.items() if not isinstance(value, int)]
-            print_error(f"The color keys {keys} are recursive.")
+            print_fatal(f"The color keys {keys} are recursive.")
             return 1
         elif not fails:
             break
@@ -374,7 +375,7 @@ async def main(*, partial, repository, source, token):
         try:
             default_color = get_color(default_color, colors)
         except BaseException as e:
-            print_error(f"The default color requests color '{default_color}' which is not valid", e)
+            print_fatal(f"The default color requests color '{default_color}' which is not valid", e)
             return 1
 
     default_description = defaults.get("description", None)
@@ -391,14 +392,14 @@ async def main(*, partial, repository, source, token):
         if partial:
             pass
         elif label_color is None:
-            print_error(f"The label '{label_name}' does not have a color and no default was provided.")
+            print_fatal(f"The label '{label_name}' does not have a color and no default was provided.")
             return 1
         else:
             if isinstance(label_color, str):
                 try:
                     label_color = get_color(label_color, colors)
                 except BaseException as e:
-                    print_error(f"The label '{label_name}' requests color '{label_color}' which is not valid.", e)
+                    print_fatal(f"The label '{label_name}' requests color '{label_color}' which is not valid.", e)
                     return 1
 
         label_description = label_data["description"] or default_description
@@ -434,14 +435,14 @@ async def main(*, partial, repository, source, token):
             if partial:
                 pass
             elif label_color is None:
-                print_error(f"The label '{label_name}' in group '{group_name}' does not have a color and no default was provided.")
+                print_fatal(f"The label '{label_name}' in group '{group_name}' does not have a color and no default was provided.")
                 return 1
             else:
                 if isinstance(label_color, str):
                     try:
                         label_color = get_color(label_color, colors)
                     except BaseException as e:
-                        print_error(f"The label '{label_name}' in group '{group_name}' requests color '{label_color}' which is not valid.", e)
+                        print_fatal(f"The label '{label_name}' in group '{group_name}' requests color '{label_color}' which is not valid.", e)
                         return 1
 
             label_description = label_data["description"] or group_description or default_description
@@ -450,7 +451,7 @@ async def main(*, partial, repository, source, token):
                 label_name = f"{group_prefix}:{label_name}"
 
             if label_name in requested_labels.keys():
-                print_error(f"The group '{group_name}' defines label '{label_name}' which already exists.")
+                print_fatal(f"The group '{group_name}' defines label '{label_name}' which already exists.")
                 return 1
 
             requested_labels[label_name] = {
@@ -474,13 +475,13 @@ async def main(*, partial, repository, source, token):
         try:
             data = await client.request(QUERY_REPOSITORY_ID, owner=owner, name=name)
         except graphql.client.ClientResponseError as e:
-            print_error("The request to fetch your repository identifier failed.", e)
+            print_fatal("The request to fetch your repository identifier failed.", e)
             return 1
 
         try:
             repository_id = data["repository"]["id"]
         except KeyError as e:
-            print_error("The repository you provided does not exist or the token you provided cannot see it.", e)
+            print_fatal("The repository you provided does not exist or the token you provided cannot see it.", e)
             return 1
 
         print_info("Populating existing labels.")
@@ -494,7 +495,7 @@ async def main(*, partial, repository, source, token):
             try:
                 data = await client.request(QUERY_REPOSITORY_LABELS_PAGE, cursor=cursor, repository_id=repository_id)
             except graphql.client.ClientResponseError as e:
-                print_error("The request to fetch your repository labels failed.", e)
+                print_fatal("The request to fetch your repository labels failed.", e)
                 return 1
 
             for label in data["node"]["labels"]["nodes"]:
@@ -515,7 +516,7 @@ async def main(*, partial, repository, source, token):
                 try:
                     await client.request(MUTATE_LABEL_DELETE, input=data)
                 except graphql.client.ClientResponseError as e:
-                    print_error(f"The request to delete label '{name}' failed.", e)
+                    print_fatal(f"The request to delete label '{name}' failed.", e)
                     return 1
 
                 delete_n += 1
@@ -543,7 +544,7 @@ async def main(*, partial, repository, source, token):
                 try:
                     await client.request(MUTATE_LABEL_UPDATE, input=data)
                 except graphql.client.ClientResponseError as e:
-                    print_error(f"The request to update label '{name}' failed.", e)
+                    print_fatal(f"The request to update label '{name}' failed.", e)
                     return 1
 
                 update_n += 1
@@ -562,7 +563,7 @@ async def main(*, partial, repository, source, token):
             try:
                 await client.request(MUTATE_LABEL_CREATE, input=data)
             except graphql.client.ClientResponseError as e:
-                print_error(f"The request to create label '{name}' failed.", e)
+                print_fatal(f"The request to create label '{name}' failed.", e)
                 return 1
 
             create_n += 1
@@ -580,7 +581,7 @@ async def main_catchall(*args, **kwargs):
     try:
         code = await main(*args, **kwargs)
     except BaseException as e:
-        print_error(e)
+        print_fatal(e)
         code = 1
     finally:
         return code
