@@ -513,6 +513,8 @@ async def main(*, partial, repository, source, token):
             for name in existing_labels.keys() - requested_labels.keys():
                 data = {"id": existing_labels[name]["id"]}
 
+                print_debug(f"Deleting label '{name}'...", end="")
+
                 try:
                     await client.request(MUTATE_LABEL_DELETE, input=data)
                 except graphql.client.ClientResponseError as e:
@@ -520,7 +522,7 @@ async def main(*, partial, repository, source, token):
                     return 1
 
                 delete_n += 1
-                print_debug(f"Deleted '{name}'.")
+                print_debug("done")
 
             print_info(f"Deleted {delete_n} labels.")
 
@@ -541,6 +543,8 @@ async def main(*, partial, repository, source, token):
             if data:
                 data["id"] = existing_data["id"]
 
+                print_debug(f"Updating label '{name}'...", end="")
+
                 try:
                     await client.request(MUTATE_LABEL_UPDATE, input=data)
                 except graphql.client.ClientResponseError as e:
@@ -548,7 +552,7 @@ async def main(*, partial, repository, source, token):
                     return 1
 
                 update_n += 1
-                print_debug(f"Updated '{name}'.")
+                print_debug("done")
             else:
                 skip_n += 1
 
@@ -560,6 +564,8 @@ async def main(*, partial, repository, source, token):
             data["name"] = name
             data["repositoryId"] = repository_id
 
+            print_debug(f"Creating label '{name}'...", end="")
+
             try:
                 await client.request(MUTATE_LABEL_CREATE, input=data)
             except graphql.client.ClientResponseError as e:
@@ -567,7 +573,7 @@ async def main(*, partial, repository, source, token):
                 return 1
 
             create_n += 1
-            print_debug(f"Created '{name}'.")
+            print_debug("done")
 
         print_info(f"Created {create_n} labels.")
 
