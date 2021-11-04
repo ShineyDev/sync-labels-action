@@ -95,10 +95,10 @@ def _create_printer(*, id=None, level=None, prefix=None, suffix=None, stream=Non
     return printer
 
 
-print_debug = _create_printer(id="DEBUG", level=4, prefix="  \x1B[32m[{id}]\x1B[39m ", suffix="")
-print_info = _create_printer(id="INFO", level=3, prefix="   \x1B[34m[{id}]\x1B[39m ", suffix="")
-print_warning = _create_printer(id="WARNING", level=2, prefix="\x1B[33m[{id}]\x1B[39m ", suffix="")
-print_error = _create_printer(id="ERROR", level=1, prefix="  \x1B[31m[{id}]\x1B[39m", stream=sys.stderr, suffix="")
+print_debug = _create_printer(id="DEBUG", level=4, prefix="  \x1B[32m[{id}]\x1B[39m ")
+print_info = _create_printer(id="INFO", level=3, prefix="   \x1B[34m[{id}]\x1B[39m ")
+print_warning = _create_printer(id="WARNING", level=2, prefix="\x1B[33m[{id}]\x1B[39m ")
+print_error = _create_printer(id="ERROR", level=1, prefix="  \x1B[31m[{id}]\x1B[39m", stream=sys.stderr)
 print_fatal = _create_printer(id="FATAL", level=1, prefix="  \x1B[31m[{id}] ", stream=sys.stderr, suffix="\x1B[39m")
 
 
