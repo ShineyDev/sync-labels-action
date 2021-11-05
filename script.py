@@ -513,7 +513,7 @@ async def main(*, partial, repository, source, token):
             for name in existing_labels.keys() - requested_labels.keys():
                 data = {"id": existing_labels[name]["id"]}
 
-                print_debug(f"Deleting label '{name}'...", end="")
+                print_info(f"Deleting label '{name}'...", end="")
 
                 try:
                     await client.request(MUTATE_LABEL_DELETE, input=data)
@@ -522,9 +522,10 @@ async def main(*, partial, repository, source, token):
                     return 1
 
                 delete_n += 1
-                print_debug("done")
+                print_info("done")
 
-            print_info(f"Deleted {delete_n} labels.")
+            if delete_n:
+                print_info(f"Deleted {delete_n} labels.")
 
         update_n = 0
         skip_n = 0
@@ -543,7 +544,7 @@ async def main(*, partial, repository, source, token):
             if data:
                 data["id"] = existing_data["id"]
 
-                print_debug(f"Updating label '{name}'...", end="")
+                print_info(f"Updating label '{name}'...", end="")
 
                 try:
                     await client.request(MUTATE_LABEL_UPDATE, input=data)
@@ -552,11 +553,12 @@ async def main(*, partial, repository, source, token):
                     return 1
 
                 update_n += 1
-                print_debug("done")
+                print_info("done")
             else:
                 skip_n += 1
 
-        print_info(f"Updated {update_n} labels.")
+        if update_n:
+            print_info(f"Updated {update_n} labels.")
 
         create_n = 0
         for name in requested_labels.keys() - existing_labels.keys():
@@ -564,7 +566,7 @@ async def main(*, partial, repository, source, token):
             data["name"] = name
             data["repositoryId"] = repository_id
 
-            print_debug(f"Creating label '{name}'...", end="")
+            print_info(f"Creating label '{name}'...", end="")
 
             try:
                 await client.request(MUTATE_LABEL_CREATE, input=data)
@@ -573,9 +575,10 @@ async def main(*, partial, repository, source, token):
                 return 1
 
             create_n += 1
-            print_debug("done")
+            print_info("done")
 
-        print_info(f"Created {create_n} labels.")
+        if create_n:
+            print_info(f"Created {create_n} labels.")
 
         if skip_n:
             print_info(f"Skipped {skip_n} labels.")
