@@ -28,8 +28,8 @@ _last_id = None
 _last_suffix = None
 
 
-def _create_printer(*, id=None, level=None, prefix=None, suffix=None, stream=None):
-    def printer(*args, **kwargs):
+def _create_printer(*, id=None, level=None, prefix=None, suffix=None, stream=sys.stdout):
+    def printer(*args, end="\n", file=stream, **kwargs):
         prefix_ = prefix
         suffix_ = suffix
 
@@ -43,8 +43,6 @@ def _create_printer(*, id=None, level=None, prefix=None, suffix=None, stream=Non
             *args, e = args
             args.append("See the error output below.")
 
-        file = kwargs.pop("file", stream) or sys.stdout
-
         global _last_id
         global _last_suffix
 
@@ -55,7 +53,6 @@ def _create_printer(*, id=None, level=None, prefix=None, suffix=None, stream=Non
 
         _last_id = None
 
-        end = kwargs.pop("end", "\n")
         if not end.endswith("\n"):
             _last_id = id
             _last_suffix = suffix_
