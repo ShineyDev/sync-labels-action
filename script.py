@@ -389,11 +389,10 @@ async def main(*, partial, repository, source, token):
 
         label_color = label_data["color"] or default_color
 
-        if partial:
-            pass
-        elif label_color is None:
-            print_fatal(f"The label '{label_name}' does not have a color and no default was provided.")
-            return 1
+        if label_color is None:
+            if not partial:
+                print_fatal(f"The label '{label_name}' does not have a color and no default was provided.")
+                return 1
         else:
             if isinstance(label_color, str):
                 try:
@@ -432,11 +431,10 @@ async def main(*, partial, repository, source, token):
 
             label_color = label_data["color"] or group_color or default_color
 
-            if partial:
-                pass
-            elif label_color is None:
-                print_fatal(f"The label '{label_name}' in group '{group_name}' does not have a color and no default was provided.")
-                return 1
+            if label_color is None:
+                if not partial:
+                    print_fatal(f"The label '{label_name}' in group '{group_name}' does not have a color and no default was provided.")
+                    return 1
             else:
                 if isinstance(label_color, str):
                     try:
