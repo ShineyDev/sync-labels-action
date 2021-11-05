@@ -88,7 +88,7 @@ def _create_printer(*, id=None, level=None, prefix=None, suffix=None, stream=sys
 
         if "\n" in string:
             indent = " " * len(re.sub("\x1B\\[[0-9;]+m", "", prefix_)) if prefix_ else ""
-            string = textwrap.indent(string, indent)[len(indent):]
+            string = textwrap.indent(string, indent)[len(indent) :]
 
         string = previous + string
 
