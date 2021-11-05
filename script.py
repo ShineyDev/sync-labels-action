@@ -510,7 +510,7 @@ async def main(*, partial, repository, source, token):
             print_info("Skipped delete flow.")
         else:
             delete_n = 0
-            for name in existing_labels.keys() - requested_labels.keys():
+            for name in sorted(existing_labels.keys() - requested_labels.keys()):
                 data = {"id": existing_labels[name]["id"]}
 
                 print_info(f"Deleting label '{name}'...", end="")
@@ -529,7 +529,7 @@ async def main(*, partial, repository, source, token):
 
         update_n = 0
         skip_n = 0
-        for name in existing_labels.keys() & requested_labels.keys():
+        for name in sorted(existing_labels.keys() & requested_labels.keys()):
             existing_data = existing_labels[name]
             requested_data = requested_labels[name]
 
@@ -561,7 +561,7 @@ async def main(*, partial, repository, source, token):
             print_info(f"Updated {update_n} labels.")
 
         create_n = 0
-        for name in requested_labels.keys() - existing_labels.keys():
+        for name in sorted(requested_labels.keys() - existing_labels.keys()):
             data = requested_labels[name]
             data["name"] = name
             data["repositoryId"] = repository_id
