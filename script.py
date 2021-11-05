@@ -168,8 +168,8 @@ async def main(*, partial, repository, source, token):
 
                 for group_data in source_groups:
                     group_name = group_data.get("name", None)
-                    group_color = group_data.get("color", None)
-                    group_description = group_data.get("description", None)
+                    group_color = group_data.get("color", False)
+                    group_description = group_data.get("description", False)
                     group_labels = group_data.get("labels", list())
                     if isinstance(group_labels, dict):
                         group_labels = [{"name": n, **d} for (n, d) in group_labels.items()]
@@ -182,10 +182,10 @@ async def main(*, partial, repository, source, token):
                                 break
 
                     if existing_group:
-                        if group_color is not None:
+                        if group_color is not False:
                             existing_group["color"] = group_color
 
-                        if group_description is not None:
+                        if group_description is not False:
                             existing_group["description"] = group_description
 
                         if group_labels and "labels" not in existing_group.keys():
@@ -193,8 +193,8 @@ async def main(*, partial, repository, source, token):
 
                         for label_data in group_labels:
                             label_name = label_data["name"]
-                            label_color = label_data.get("color", None)
-                            label_description = label_data.get("description", None)
+                            label_color = label_data.get("color", False)
+                            label_description = label_data.get("description", False)
 
                             existing_label = None
                             for label in existing_group["labels"]:
@@ -203,10 +203,10 @@ async def main(*, partial, repository, source, token):
                                     break
 
                             if existing_label:
-                                if label_color is not None:
+                                if label_color is not False:
                                     existing_label["color"] = label_color
 
-                                if label_description is not None:
+                                if label_description is not False:
                                     existing_label["description"] = label_description
                             else:
                                 data = {
@@ -236,8 +236,8 @@ async def main(*, partial, repository, source, token):
 
                 for label_data in source_labels:
                     label_name = label_data["name"]
-                    label_color = label_data.get("color", None)
-                    label_description = label_data.get("description", None)
+                    label_color = label_data.get("color", False)
+                    label_description = label_data.get("description", False)
 
                     existing_label = None
                     for label in labels:
@@ -246,10 +246,10 @@ async def main(*, partial, repository, source, token):
                             break
 
                     if existing_label:
-                        if label_color is not None:
+                        if label_color is not False:
                             existing_label["color"] = label_color
 
-                        if label_description is not None:
+                        if label_description is not False:
                             existing_label["description"] = label_description
                     else:
                         data = {
