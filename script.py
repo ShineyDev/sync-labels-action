@@ -29,7 +29,10 @@ _last_suffix = None
 
 
 def _create_printer(*, id=None, level=None, prefix=None, suffix=None, stream=sys.stdout):
-    def printer(*args, end="\n", file=stream, **kwargs):
+    prefix = str(prefix) if prefix else ""
+    suffix = str(suffix) if suffix else ""
+
+    def printer(*args, end="\n", file=stream, sep=" ", **kwargs):
         prefix_ = prefix
         suffix_ = suffix
 
@@ -41,15 +44,17 @@ def _create_printer(*, id=None, level=None, prefix=None, suffix=None, stream=sys
         e = None
         if args and isinstance(args[-1], BaseException):
             *args, e = args
-            args.append("See the error output below.")
+
+        args = [a if isinstance(a, str) else repr(a) for a in args]
 
         global _last_id
         global _last_suffix
 
+        previous = ""
         if id and _last_id == id:
             prefix_ = None
         elif _last_id:
-            prefix_ = _last_suffix + ("\n" + prefix_ if prefix_ is not None else "\n")
+            previous = _last_suffix + "\n"
 
         _last_id = None
 
@@ -59,28 +64,35 @@ def _create_printer(*, id=None, level=None, prefix=None, suffix=None, stream=sys
             suffix_ = None
 
         if prefix_:
-            prefix_ = prefix_.format(id=id)
-
             if args:
-                args[0] = prefix_ + (args[0] if isinstance(args[0], str) else repr(args[0]))
+                args[0] = prefix_ + args[0]
             else:
                 args = [prefix_]
 
         if suffix_:
-            suffix_ = suffix_.format(id=id)
-
             if args:
-                args[-1] = (args[-1] if isinstance(args[-1], str) else repr(args[-1])) + suffix_
+                args[-1] += suffix_
             else:
                 args = [suffix_]
 
+        string = sep.join(args)
+
         if e is not None:
-            args.append("\n\n" + textwrap.indent("".join(traceback.format_exception(type(e), e, e.__traceback__)), "    "))
+            if string:
+                if not string.endswith("\n"):
+                    string += " "
 
-        indent = " " * len(re.sub("\x1B\\[[0-9;]+m", "", prefix_)) if prefix_ else ""
-        args = [a.replace("\n", "\n" + indent) for a in args]
+                string += "See the error output below.\n\n"
 
-        print(*args, end=end, file=file, **kwargs)
+            string += "".join(traceback.format_exception(type(e), e, e.__traceback__))
+
+        if "\n" in string:
+            indent = " " * len(re.sub("\x1B\\[[0-9;]+m", "", prefix_)) if prefix_ else ""
+            string = textwrap.indent(string, indent)[len(indent):]
+
+        string = previous + string
+
+        print(string, end=end, file=file, **kwargs)
 
     printer.is_active = True
     if level is not None:
@@ -92,11 +104,11 @@ def _create_printer(*, id=None, level=None, prefix=None, suffix=None, stream=sys
     return printer
 
 
-print_debug = _create_printer(id="DEBUG", level=4, prefix="  \x1B[32m[{id}]\x1B[39m ")
-print_info = _create_printer(id="INFO", level=3, prefix="   \x1B[34m[{id}]\x1B[39m ")
-print_warning = _create_printer(id="WARNING", level=2, prefix="\x1B[33m[{id}]\x1B[39m ")
-print_error = _create_printer(id="ERROR", level=1, prefix="  \x1B[31m[{id}]\x1B[39m", stream=sys.stderr)
-print_fatal = _create_printer(id="FATAL", level=1, prefix="  \x1B[31m[{id}] ", stream=sys.stderr, suffix="\x1B[39m")
+print_debug = _create_printer(id="DEBUG", level=4, prefix="  \x1B[32m[DEBUG]\x1B[39m ")
+print_info = _create_printer(id="INFO", level=3, prefix="   \x1B[34m[INFO]\x1B[39m ")
+print_warning = _create_printer(id="WARNING", level=2, prefix="\x1B[33m[WARNING]\x1B[39m ")
+print_error = _create_printer(id="ERROR", level=1, prefix="  \x1B[31m[ERROR]\x1B[39m", stream=sys.stderr)
+print_fatal = _create_printer(id="FATAL", level=1, prefix="  \x1B[31m[FATAL] ", stream=sys.stderr, suffix="\x1B[39m")
 
 
 # fmt: off
