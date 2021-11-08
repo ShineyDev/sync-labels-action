@@ -5,12 +5,6 @@ A GitHub Action for synchronizing your GitHub repository labels with a labels.ym
 
 
 .. toctree::
-    :maxdepth: 2
-
-    introduction
-
-
-.. toctree::
     :caption: Data
     :maxdepth: 1
 
