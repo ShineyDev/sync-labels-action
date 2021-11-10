@@ -4,11 +4,6 @@ Action
 This document will guide you through using sync-labels-action as a GitHub Action.
 
 
-.. note::
-
-    This document is incomplete.
-
-
 Workflow
 --------
 
@@ -56,6 +51,9 @@ Copy the following into ``.github/workflows/sync.yml``.
           with:
             source: .github/data/labels.yml
             token: ${{ env.AUTH_TOKEN }}
+
+
+...
 
 
 Token
