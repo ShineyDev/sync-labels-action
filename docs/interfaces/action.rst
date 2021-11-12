@@ -53,9 +53,6 @@ Copy the following into ``.github/workflows/sync.yml``.
             token: ${{ env.AUTH_TOKEN }}
 
 
-...
-
-
 Token
 -----
 
