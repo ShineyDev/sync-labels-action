@@ -29,7 +29,8 @@
 Use
 ---
 
-See `Using sync-labels-action as a GitHub Action <https://docs.shiney.dev/sync-labels-action/latest/interfaces/action>`_ or `Using sync-labels-action as a Python script <https://docs.shiney.dev/sync-labels-action/latest/interfaces/script>`_.
+- `Using sync-labels-action as a GitHub Action <https://docs.shiney.dev/sync-labels-action/latest/interfaces/action>`_
+- `Using sync-labels-action as a Python script <https://docs.shiney.dev/sync-labels-action/latest/interfaces/script>`_
 
 
 .. raw:: html
