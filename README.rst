@@ -23,7 +23,7 @@
 .. raw:: html
 
     <h1 align="center">ShineyDev/sync-labels-action</h1>
-    <p align="center">A GitHub Action for synchronizing your GitHub repository labels with a labels.yml file.<br><a href="https://docs.shiney.dev/sync-labels-action">documentation</a> | <a href="https://github.com/ShineyDev/sync-labels-action/blob/main/examples">examples</a></p>
+    <p align="center">A GitHub Action for synchronizing your GitHub repository labels with a labels.yml file.<br><a href="https://docs.shiney.dev/sync-labels-action">documentation</a></p>
 
 
 Use
