@@ -37,7 +37,7 @@ extensions = [
 ]
 
 extlinks = {
-    "issue": (f"https://github.com/{author}/{project}/issues/%s", "#"),
+    "issue": (f"https://github.com/{author}/{project}/issues/%s", "#%s"),
 }
 
 
