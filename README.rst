@@ -1,20 +1,20 @@
 .. raw:: html
 
     <p align="center">
-        <a href="https://github.com/ShineyDev/sync-labels-action/actions?query=workflow%3AAnalyze">
-            <img alt="Analyze Status" src="https://github.com/ShineyDev/sync-labels-action/workflows/Analyze/badge.svg?event=push" />
+        <a href="https://github.com/ShineyDev/sync-labels-action/actions/workflows/analyze.yml?query=branch%3Amain+event%3Apush+is%3Acompleted">
+            <img alt="Analyze Status" src="https://github.com/ShineyDev/sync-labels-action/actions/workflows/analyze.yml/badge.svg?branch=main&event=push" />
         </a>
 
-        <a href="https://github.com/ShineyDev/sync-labels-action/actions?query=workflow%3ADeploy">
-            <img alt="Deploy Status" src="https://github.com/ShineyDev/sync-labels-action/workflows/Deploy/badge.svg?event=push" />
+        <a href="https://github.com/ShineyDev/sync-labels-action/actions/workflows/deploy.yml?query=branch%3Amain+event%3Apush+is%3Acompleted">
+            <img alt="Deploy Status" src="https://github.com/ShineyDev/sync-labels-action/actions/workflows/deploy.yml/badge.svg?branch=main&event=push" />
         </a>
 
-        <a href="https://github.com/ShineyDev/sync-labels-action/actions?query=workflow%3ALint">
-            <img alt="Lint Status" src="https://github.com/ShineyDev/sync-labels-action/workflows/Lint/badge.svg?event=push" />
+        <a href="https://github.com/ShineyDev/sync-labels-action/actions/workflows/lint.yml?query=branch%3Amain+event%3Apush+is%3Acompleted">
+            <img alt="Lint Status" src="https://github.com/ShineyDev/sync-labels-action/actions/workflows/lint.yml/badge.svg?branch=main&event=push" />
         </a>
 
-        <a href="https://github.com/ShineyDev/sync-labels-action/actions?query=workflow%3ASync">
-            <img alt="Sync Status" src="https://github.com/ShineyDev/sync-labels-action/workflows/Sync/badge.svg" />
+        <a href="https://github.com/ShineyDev/sync-labels-action/actions/workflows/sync.yml?query=branch%3Amain+event%3Apush+is%3Acompleted">
+            <img alt="Sync Status" src="https://github.com/ShineyDev/sync-labels-action/actions/workflows/sync.yml/badge.svg?branch=main&event=push" />
         </a>
     </p>
 
